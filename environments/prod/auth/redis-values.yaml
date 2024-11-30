@@ -1,0 +1,32 @@
+auth:
+  enabled: true
+  existingSecret: auth-redis-secrets
+  existingSecretPasswordKey: password
+serviceAccount:
+  create: false
+master:
+  serviceAccount:
+    create: false
+    name: auth-sa
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: block-general
+    accessModes: 
+      - ReadWriteOnce
+  service:
+    ports:
+      redis: 6379
+  extraVolumes:
+    - name: auth-secrets-store
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "auth-redis-secrets"
+  extraVolumeMounts:
+    - name: auth-secrets-store
+      mountPath: "/mnt/secrets-store"
+      readOnly: true
+replica:
+  replicaCount: 0

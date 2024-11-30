@@ -1,0 +1,97 @@
+base:
+  namespace:
+    name: kafka
+kafkaCluster:
+  name: kafka-cluster
+  kafka:
+    version: 3.8.0
+    metadataVersion: 3.8-IV0
+    replicas: 1
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+        authentication:
+          type: tls
+      - name: external
+        port: 9094
+        type: nodeport
+        tls: false
+    storageVolumes:
+      - id: 0
+        type: persistent-claim
+        kraftMetadata: shared
+        size: 8Gi
+        class: block-general
+        deleteClaim: false
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      min.insync.replicas: 1
+  broker:
+    replicas: 1
+    storageVolumes:
+      - id: 0
+        type: persistent-claim
+        size: 50Gi
+        class: block-general
+        deleteClaim: false
+        kraftMetadata: shared
+      - id: 1
+        type: persistent-claim
+        size: 50Gi
+        class: block-general
+        deleteClaim: false
+  entityOperator: 
+    topicOperator: {}
+    userOperator: {}
+
+kafkaUI:
+  enabled: true
+  name: kafka-ui
+  labelName: kafka-ui
+  containerName: kafka-ui
+  replicas: 1
+  image:
+    repository: provectuslabs/kafka-ui
+    tag: latest
+  service:
+    port: 8080
+    containerPort: 8080
+  env:
+    KAFKA_CLUSTERS_0_NAME: "local"
+    KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: "kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+  istio:
+    enabled: true
+    namespace: istio-system
+    gateway: public-gateway
+    virtualServiceName: kafka-ui
+    hosts:
+      - kafka-ui.state.api.cresplanex.org
+
+kafkaConnect:
+  enabled: true
+  name: kafka-connect
+  replicas: 1
+  bootstrapServers: "kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+  config:
+    group.id: connect-cluster
+    config.storage.topic: connect-configs
+    offset.storage.topic: connect-offsets
+    status.storage.topic: connect-status
+    # -1 means it will use the default replication factor configured in the broker
+    config.storage.replication.factor: -1
+    offset.storage.replication.factor: -1
+    status.storage.replication.factor: -1
+  build:
+    output:
+      type: docker
+      image: docker.io/ablankz/debezium:1.0.0
+    plugins: []

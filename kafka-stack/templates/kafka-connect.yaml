@@ -1,0 +1,30 @@
+{{- if .Values.kafkaConnect.enabled }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+    name: {{ .Values.kafkaConnect.name }}
+    namespace: {{ .Values.base.namespace.name }}
+    labels:
+        strimzi.io/cluster: {{ .Values.kafkaCluster.name }}
+spec:
+    replicas: {{ .Values.kafkaConnect.replicas }}
+    bootstrapServers: {{ .Values.kafkaConnect.bootstrapServers }}
+    config:
+    {{- range $key, $value := .Values.kafkaConnect.config }}
+        {{ $key }}: {{ $value }}
+    {{- end }}
+    build:
+        output:
+            type: {{ .Values.kafkaConnect.build.output.type }}
+            image: {{ .Values.kafkaConnect.build.output.image }}
+        plugins: []
+        # {{- range .Values.kafkaConnect.build.plugins }}
+        #     - name: {{ .name }}
+        #       artifacts: 
+        #       {{- range .artifacts }}
+        #         - group: {{ .group }}
+        #           artifact: {{ .artifact }}
+        #           version: {{ .version }}
+        #       {{- end }}
+        # {{- end }}
+{{- end }}

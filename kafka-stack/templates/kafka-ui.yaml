@@ -1,0 +1,69 @@
+{{- if .Values.kafkaUI.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.kafkaUI.name }}
+  namespace: {{ .Values.base.namespace.name }}
+  labels:
+    app: {{ .Values.kafkaUI.labelName }}
+spec:
+  replicas: {{ .Values.kafkaUI.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.kafkaUI.labelName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.kafkaUI.labelName }}
+    spec:
+      containers:
+        - name: {{ .Values.kafkaUI.containerName }}
+          image: "{{ .Values.kafkaUI.image.repository }}:{{ .Values.kafkaUI.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.kafkaUI.service.containerPort }}
+          env:
+            {{- range $key, $value := .Values.kafkaUI.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Values.kafkaUI.name }}
+    namespace: {{ .Values.base.namespace.name }}
+spec:
+    ports:
+        - port: {{ .Values.kafkaUI.service.port }}
+          targetPort: {{ .Values.kafkaUI.service.containerPort }}
+    selector:
+        app: {{ .Values.kafkaUI.labelName }}
+    type: ClusterIP
+
+---
+{{- if .Values.kafkaUI.istio.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Values.kafkaUI.istio.virtualServiceName }}
+  namespace: {{ .Values.kafkaUI.istio.namespace }}
+spec:
+    hosts:
+        {{- range .Values.kafkaUI.istio.hosts }}
+        - {{ . }}
+        {{- end }}
+    gateways:
+        - {{ .Values.kafkaUI.istio.gateway }}
+    http:
+        - match:
+            - uri:
+                prefix: /
+          route:
+            - destination:
+                host: {{ .Values.kafkaUI.name }}.{{ .Values.base.namespace.name }}.svc.cluster.local
+                port:
+                    number: {{ .Values.kafkaUI.service.port }}
+{{- end }}
+
+{{- end }}

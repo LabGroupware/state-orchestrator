@@ -1,0 +1,79 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+    name: controller
+    namespace: {{ .Values.base.namespace.name }}
+    labels:
+        strimzi.io/cluster: {{ .Values.kafkaCluster.name }}
+spec:
+    replicas: {{ .Values.kafkaCluster.kafka.replicas }}
+    roles:
+        - controller
+    storage:
+        type: jbod
+        volumes:
+        {{- range .Values.kafkaCluster.kafka.storageVolumes }}
+            - id: {{ .id }}
+              type: {{ .type }}
+              size: {{ .size }}
+              class: {{ .class }}
+              deleteClaim: {{ .deleteClaim }}
+              kraftMetadata: {{ .kraftMetadata }}
+        {{- end }}
+---
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+    name: broker
+    namespace: {{ .Values.base.namespace.name }}
+    labels:
+        strimzi.io/cluster: {{ .Values.kafkaCluster.name }}
+spec:
+    replicas: {{ .Values.kafkaCluster.broker.replicas }}
+    roles:
+        - broker
+    storage:
+        type: jbod
+        volumes: 
+        {{- range .Values.kafkaCluster.broker.storageVolumes }}
+            - id: {{ .id }}
+              type: {{ .type }}
+              size: {{ .size }}
+              class: {{ .class }}
+              deleteClaim: {{ .deleteClaim }}
+              kraftMetadata: {{ .kraftMetadata }}
+        {{- end }}
+
+---
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+    name: {{ .Values.kafkaCluster.name }}
+    namespace: {{ .Values.base.namespace.name }}
+    annotations:
+        strimzi.io/node-pools: enabled
+        strimzi.io/kraft: enabled
+spec:
+    kafka:
+        version: {{ .Values.kafkaCluster.kafka.version }}
+        metadataVersion: {{ .Values.kafkaCluster.kafka.metadataVersion }}
+        listeners:
+        {{- range .Values.kafkaCluster.kafka.listeners }}
+            - name: {{ .name }}
+              port: {{ .port }}
+              type: {{ .type }}
+              tls: {{ .tls }}
+              {{- if .authentication }}
+              authentication:
+                  type: {{ .authentication.type }}
+              {{- end }}
+        {{- end }}
+        config:
+        {{- range $key, $value := .Values.kafkaCluster.kafka.config }}
+            {{ $key }}: {{ $value }}
+        {{- end }}
+    entityOperator:
+        topicOperator: {{ .Values.kafkaCluster.entityOperator.topicOperator | default "{}" }}
+        userOperator: {{ .Values.kafkaCluster.entityOperator.userOperator | default "{}" }}

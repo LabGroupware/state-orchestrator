@@ -1,0 +1,86 @@
+{{- if .Values.authServer.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-auth-connector-config
+data:
+  connector-config.json: |
+    {
+      "name": "auth-{{ .Values.base.name }}",
+      "config": {
+        "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+        "tasks.max": "1",
+        "database.hostname": {{ .Values.authServer.database.hostname }},
+        "database.port": {{ .Values.authServer.database.port }},
+        "database.user": {{ .Values.authServer.database.username }},
+        "database.password": "$DATABASE_PASSWORD",
+        "database.dbname": {{ .Values.authServer.database.dbname }},
+        "database.server.name": "auth-db",
+        "table.include.list": "core.message",
+        "topic.prefix": "auth",
+        "plugin.name": "pgoutput",
+        "slot.name": "debezium_auth_slot",
+        "publication.name": "debezium_auth_publication",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "true",
+        "value.converter.schemas.enable": "true",
+        "transforms": "messaging",
+        "transforms.messaging.type": "org.cresplanex.core.cdc.debezium.TransactionalMessaging"
+      }
+    }
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-auth-auth-register-connector
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authServer.database.passwordSecrets }}
+                  key: {{ .Values.authServer.database.passwordSecretKey }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL to be ready..."
+              until psql -h {{ .Values.authServer.database.hostname }} -U {{ .Values.authServer.database.username }} -d {{ .Values.authServer.database.dbname }} -c "SELECT 1;" > /dev/null 2>&1; do
+                echo "PostgreSQL is not ready. Retrying in 5 seconds..."
+                sleep 5
+              done
+              echo "PostgreSQL is ready."
+      containers:
+        - name: register-connector
+          image: curlimages/curl:latest
+          serviceAccountName: {{ .Values.authServer.serviceAccount }}
+          command:
+            - sh
+            - -c
+            - |
+              sleep 10 &&
+              curl -X POST -H "Content-Type: application/json" \
+              --data @/tmp/connector-config.json \
+              http://{{ .Values.base.connector.connectHost }}:{{ .Values.base.connector.connectPort }}/connectors
+          volumeMounts:
+            - name: connector-config
+              mountPath: /tmp
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.authServer.database.passwordSecrets }}
+                  key: {{ .Values.authServer.database.passwordSecretKey }}
+      volumes:
+        - name: connector-config
+          configMap:
+            name: {{ .Release.Name }}-auth-connector-config
+      restartPolicy: OnFailure
+{{- end }}

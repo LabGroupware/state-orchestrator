@@ -1,0 +1,31 @@
+base:
+  name: "debezium-connector"
+  connector:
+    connectHost: "debezium-connector-connect"
+    connectPort: 8083
+authServer:
+  enabled: true
+  serviceAccount: "auth"
+  database:
+    hostname: "postgres"
+    port: 5432
+    username: "postgres"
+    dbname: "auth"
+    passwordSecrets: "auth-secrets"
+    passwordSecretKey: "password"
+jobService:
+  enabled: true
+websocketService:
+  enabled: true
+userProfileService:
+  enabled: true
+userPreferenceService:
+  enabled: true
+organizationService:
+  enabled: true
+teamService:
+  enabled: true
+planService:
+  enabled: true
+storageService:
+  enabled: true

@@ -1,0 +1,59 @@
+# apiVersion: secrets-store.csi.x-k8s.io/v1
+# kind: SecretProviderClass
+# metadata:
+#   name: test-secrets
+#   namespace: auth-service
+# spec:
+#   provider: aws
+#   parameters:
+#     objects: |
+#       - objectName: "auth-secrets"
+#         objectType: "secretsmanager"
+#         jmesPath:
+#           - path: "postgresAdminPassword"
+#             objectAlias: "postgres-admin-password"
+#           - path: "postgresPassword"
+#             objectAlias: "postgres-password"
+#           - path: "redisPassword"
+#             objectAlias: "redis-password"
+#   secretObjects:
+#     - data:
+#         - key: password
+#           objectName: postgres-password
+#         - key: admin-password
+#           objectName: postgres-admin-password
+#       secretName: auth-db-secrets
+#       type: Opaque
+#     - data:
+#         - key: password
+#           objectName: redis-password
+#       secretName: auth-redis-secrets
+#       type: Opaque
+# ---
+# kind: Pod
+# apiVersion: v1
+# metadata:
+#   name: nginx-secrets-store-inline
+#   namespace: auth-service
+# spec:
+#   serviceAccountName: auth-sa
+#   containers:
+#   - image: nginx
+#     name: nginx
+#     env:
+#     - name: SECRET_PASSWORD
+#       valueFrom:
+#         secretKeyRef:
+#           name: auth-db-secrets
+#           key: password
+#     volumeMounts:
+#     - name: mysecret
+#       mountPath: "/mnt/secrets-store"
+#       readOnly: true
+#   volumes:
+#     - name: mysecret
+#       csi:
+#         driver: secrets-store.csi.k8s.io
+#         readOnly: true
+#         volumeAttributes:
+#           secretProviderClass: "test-secrets"

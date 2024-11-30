@@ -1,0 +1,96 @@
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: strimzi
+    url: https://strimzi.io/charts/
+  - name: ecr
+    url: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+    oci: true
+    username: 'AWS'
+    password: '{{ requiredEnv "ECR_PASSWORD" }}'
+
+releases:
+  - name: kafka-operator
+    namespace: kafka
+    chart: strimzi/strimzi-kafka-operator
+    values:
+      - watchNamespaces: ["kafka"] # Operatorが監視するNamespaceを設定
+  - name: kafka-stack
+    namespace: kafka
+    chart: ecr/kafka-stack
+    version: 0.1.16
+    values:
+      - kafkaConnect:
+          build:
+            output:
+              image: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com/debezium:1.2.0'
+  # Auth
+  - name: redis
+    namespace: auth-service
+    chart: bitnami/redis
+    values:
+      - "auth/redis-values.yaml"
+  - name: postgres
+    namespace: auth-service
+    chart: bitnami/postgresql
+    values:
+      - "auth/postgres-values.yaml"
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+  # - name: auth
+  #   namespace: auth-service
+  #   chart: ecr/auth-server
+  #   version: 0.1.0
+  #   values:
+  #     - namespace: auth-server
+  #       serviceAccount:
+  #         name: auth-sa
+  #       db:
+  #         url: "jdbc:postgresql://postgres.auth-service.svc.cluster.local:5432/auth"
+  #         username: postgres
+  #         secretName: auth-db-secrets
+  #         secretPasswordKey: password
+  #       redis:
+  #         host: redis.auth-service.svc.cluster.local
+  #         port: 6379
+  #         secretName: auth-redis-secrets
+  #         secretPasswordKey: password
+  #       kafka:
+  #         server: kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+  #       istio:
+  #         enabled: true
+  # - name: debezium-connector
+  #   chart: ecr/debezium-connector
+  #   version: 0.1.0
+  #   values:
+  #     - base:
+  #         name: "debezium-connector"
+  #         connector:
+  #           connectHost: kafka-connect-connect.kafka.svc.cluster.local
+  #           connectPort: 8083
+  #       authServer:
+  #         enabled: true
+  #         serviceAccount: "auth-sa"
+  #         database:
+  #           hostname: "postgres.auth-service.svc.cluster.local"
+  #           port: 5432
+  #           username: "postgres"
+  #           dbname: "auth"
+  #           passwordSecrets: "auth-db-secrets"
+  #           passwordSecretKey: "password"
+  #       jobService:
+  #         enabled: true
+  #       websocketService:
+  #         enabled: true
+  #       userProfileService:
+  #         enabled: true
+  #       userPreferenceService:
+  #         enabled: true
+  #       organizationService:
+  #         enabled: true
+  #       teamService:
+  #         enabled: true
+  #       planService:
+  #         enabled: true
+  #       storageService:
+  #         enabled: true
