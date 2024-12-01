@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "web-gateway.name" . }}
+  namespace: {{ .Values.global.services.webGateway.namespace }}
+  labels:
+    {{- include "web-gateway.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.global.services.webGateway.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "web-gateway.selectorLabels" . | nindent 4 }}

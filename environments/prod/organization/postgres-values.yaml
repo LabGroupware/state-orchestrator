@@ -1,0 +1,41 @@
+auth:
+  username: svcuser
+  existingSecret: organization-db-secrets
+  secretKeys:
+    adminPasswordKey: admin-password
+    userPasswordKey: password
+image:
+  repository: "postgres"
+  tag: "1.2.0"
+serviceAccount:
+  name: organization-sa
+  create: false
+readReplicas:
+  replicaCount: 0
+primary:
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: block-general
+    accessModes: 
+      - ReadWriteOnce
+  service:
+    ports:
+      postgresql: 5432
+  extraVolumes:
+    - name: organization-secrets-store
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "organization-db-secrets"
+  extraVolumeMounts:
+    - name: organization-secrets-store
+      mountPath: "/mnt/secrets-store"
+      readOnly: true
+  pgHbaConfiguration: |-
+    host replication svcuser 0.0.0.0/0 trust
+    local replication svcuser  trust
+    local replication postgres trust

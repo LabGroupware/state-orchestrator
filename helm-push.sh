@@ -7,7 +7,13 @@ if [ "$REPO_NAME" == "" ]; then
   exit 1
 fi
 
-OUTPUT_FILE=$(helm package $REPO_NAME -d ./chart/$REPO_NAME | awk '{print $NF}')
+TARGET_REPO_PATH="$2"
+
+if [ "$TARGET_REPO_PATH" == "" ]; then
+  TARGET_REPO_PATH="$REPO_NAME"
+fi
+
+OUTPUT_FILE=$(helm package $TARGET_REPO_PATH -d ./chart/$TARGET_REPO_PATH | awk '{print $NF}')
 
 REGION="ap-northeast-1"
 export AWS_DEFAULT_PROFILE=terraform

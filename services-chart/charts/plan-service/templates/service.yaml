@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "plan-service.name" . }}
+  namespace: {{ .Values.global.services.planService.namespace }}
+  labels:
+    {{- include "plan-service.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.global.services.planService.ports.grpcPort }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+  selector:
+    {{- include "plan-service.selectorLabels" . | nindent 4 }}

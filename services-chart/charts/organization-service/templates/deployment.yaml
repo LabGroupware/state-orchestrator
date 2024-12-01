@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "organization-service.name" . }}
+  namespace: {{ .Values.global.services.organizationService.namespace }}
+  labels:
+    {{- include "organization-service.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "organization-service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "organization-service.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.containerPorts.grpcPort }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: ORGANIZATION_SERVICE_GRPC_PORT
+              value: "{{ .Values.containerPorts.grpcPort }}"
+            - name: DB_URL
+              value: "{{ .Values.db.url }}"
+            - name: DB_USERNAME
+              value: "{{ .Values.db.username }}"
+            - name: JOB_SERVICE_HOST
+              value: "{{ .Values.global.services.jobService.host }}.{{ .Values.global.services.jobService.namespace }}.svc.cluster.local"
+            - name: JOB_SERVICE_GRPC_PORT
+              value: "{{ .Values.global.services.jobService.ports.grpcPort }}"
+            - name: KAFKA_SERVER
+              value: "{{ .Values.global.kafka.server }}"
+            - name: CUSTOM_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.secretName }}
+                  key: {{ .Values.secret.secretPasswordKey }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName }}
+                  key: {{ .Values.db.secretPasswordKey }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

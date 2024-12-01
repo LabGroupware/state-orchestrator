@@ -79,19 +79,29 @@ kafkaUI:
 kafkaConnect:
   enabled: true
   name: kafka-connect
+  port: 8083
+  image:
+    repository: ablankz/debezium
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
   replicas: 1
   bootstrapServers: "kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
   config:
-    group.id: connect-cluster
-    config.storage.topic: connect-configs
-    offset.storage.topic: connect-offsets
-    status.storage.topic: connect-status
+    group_id: connect-cluster
+    config_storage_topic: connect-configs
+    offset_storage_topic: connect-offsets
+    status_storage_topic: connect-status
+  additionalEnv: []
+  resources: {}
     # -1 means it will use the default replication factor configured in the broker
-    config.storage.replication.factor: -1
-    offset.storage.replication.factor: -1
-    status.storage.replication.factor: -1
-  build:
-    output:
-      type: docker
-      image: docker.io/ablankz/debezium:1.0.0
-    plugins: []
+    # config.storage.replication.factor: -1
+    # offset.storage.replication.factor: -1
+    # status.storage.replication.factor: -1
+  # build:
+  #   output:
+  #     type: docker
+  #     image: docker.io/ablankz/debezium:1.0.0
+  #   plugins:
+  #     - name: debezium-postgres-connector
+  #       artifacts:
+  #         - type: tgz

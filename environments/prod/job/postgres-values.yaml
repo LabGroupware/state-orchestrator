@@ -1,0 +1,41 @@
+auth:
+  username: svcuser
+  existingSecret: job-db-secrets
+  secretKeys:
+    adminPasswordKey: admin-password
+    userPasswordKey: password
+image:
+  repository: "postgres"
+  tag: "1.2.0"
+serviceAccount:
+  name: job-sa
+  create: false
+readReplicas:
+  replicaCount: 0
+primary:
+  containerSecurityContext:
+    readOnlyRootFilesystem: false
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: block-general
+    accessModes: 
+      - ReadWriteOnce
+  service:
+    ports:
+      postgresql: 5432
+  extraVolumes:
+    - name: job-secrets-store
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "job-db-secrets"
+  extraVolumeMounts:
+    - name: job-secrets-store
+      mountPath: "/mnt/secrets-store"
+      readOnly: true
+  pgHbaConfiguration: |-
+    host replication svcuser 0.0.0.0/0 trust
+    local replication svcuser  trust
+    local replication postgres trust

@@ -53,19 +53,29 @@ spec:
           {{- end }}
           env:
             - name: REQUIRE_HTTPS
-              value: true
+              value: "false"
             - name: AUTH_SEVER_PORT
-              value: {{ .Values.containerPort }}
+              value: "{{ .Values.containerPort }}"
             - name: DB_URL
-              value: {{ .Values.db.url }}
+              value: "{{ .Values.db.url }}"
             - name: DB_USERNAME
-              value: {{ .Values.db.username }}
+              value: "{{ .Values.db.username }}"
             - name: REDIS_HOST
-              value: {{ .Values.redis.host }}
+              value: "{{ .Values.redis.host }}"
             - name: REDIS_PORT
-              value: {{ .Values.redis.port }}
+              value: "{{ .Values.redis.port }}"
             - name: KAFKA_SERVER
-              value: {{ .Values.kafka.server }}
+              value: "{{ .Values.kafka.server }}"
+            - name: CUSTOM_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.secretName }}
+                  key: {{ .Values.app.secretPasswordKey }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.app.jwt.secretName }}
+                  key: {{ .Values.app.jwt.secretPasswordKey }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:

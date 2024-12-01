@@ -1,3 +1,9 @@
+helmDefaults:
+  wait: true
+  timeout: 600
+  # atomic: true       # インストール失敗時に自動ロールバック
+  # concurrent: 1      # 同時実行数を1に制限
+
 repositories:
   - name: bitnami
     url: https://charts.bitnami.com/bitnami
@@ -10,87 +16,165 @@ repositories:
     password: '{{ requiredEnv "ECR_PASSWORD" }}'
 
 releases:
-  - name: kafka-operator
+  - name: core-kafka-operator
     namespace: kafka
     chart: strimzi/strimzi-kafka-operator
-    values:
-      - watchNamespaces: ["kafka"] # Operatorが監視するNamespaceを設定
   - name: kafka-stack
     namespace: kafka
     chart: ecr/kafka-stack
-    version: 0.1.16
-    values:
-      - kafkaConnect:
-          build:
-            output:
-              image: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com/debezium:1.2.0'
-  # Auth
-  - name: redis
+    version: 0.1.20
+    needs:
+      - kafka/core-kafka-operator
+  - name: auth-redis
     namespace: auth-service
     chart: bitnami/redis
     values:
       - "auth/redis-values.yaml"
-  - name: postgres
+    needs:
+      - kafka/kafka-stack
+  - name: auth-postgres
     namespace: auth-service
     chart: bitnami/postgresql
     values:
-      - "auth/postgres-values.yaml"
       - image:
           registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-  # - name: auth
-  #   namespace: auth-service
-  #   chart: ecr/auth-server
-  #   version: 0.1.0
-  #   values:
-  #     - namespace: auth-server
-  #       serviceAccount:
-  #         name: auth-sa
-  #       db:
-  #         url: "jdbc:postgresql://postgres.auth-service.svc.cluster.local:5432/auth"
-  #         username: postgres
-  #         secretName: auth-db-secrets
-  #         secretPasswordKey: password
-  #       redis:
-  #         host: redis.auth-service.svc.cluster.local
-  #         port: 6379
-  #         secretName: auth-redis-secrets
-  #         secretPasswordKey: password
-  #       kafka:
-  #         server: kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
-  #       istio:
-  #         enabled: true
-  # - name: debezium-connector
-  #   chart: ecr/debezium-connector
-  #   version: 0.1.0
-  #   values:
-  #     - base:
-  #         name: "debezium-connector"
-  #         connector:
-  #           connectHost: kafka-connect-connect.kafka.svc.cluster.local
-  #           connectPort: 8083
-  #       authServer:
-  #         enabled: true
-  #         serviceAccount: "auth-sa"
-  #         database:
-  #           hostname: "postgres.auth-service.svc.cluster.local"
-  #           port: 5432
-  #           username: "postgres"
-  #           dbname: "auth"
-  #           passwordSecrets: "auth-db-secrets"
-  #           passwordSecretKey: "password"
-  #       jobService:
-  #         enabled: true
-  #       websocketService:
-  #         enabled: true
-  #       userProfileService:
-  #         enabled: true
-  #       userPreferenceService:
-  #         enabled: true
-  #       organizationService:
-  #         enabled: true
-  #       teamService:
-  #         enabled: true
-  #       planService:
-  #         enabled: true
-  #       storageService:
-  #         enabled: true
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_AUTH_PASSWORD" }}'
+      - "auth/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: websocket-redis
+    namespace: websocket-service
+    chart: bitnami/redis
+    values:
+      - "websocket/redis-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: websocket-postgres
+    namespace: websocket-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_WEBSOCKET_PASSWORD" }}'
+      - "websocket/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: job-redis
+    namespace: job-service
+    chart: bitnami/redis
+    values:
+      - "job/redis-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: job-postgres
+    namespace: job-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_JOB_PASSWORD" }}'
+      - "job/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: user-profile-postgres
+    namespace: user-profile-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_USER_PROFILE_PASSWORD" }}'
+      - "user-profile/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: user-preference-postgres
+    namespace: user-preference-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_USER_PREFERENCE_PASSWORD" }}'
+      - "user-preference/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: organization-postgres
+    namespace: organization-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_ORGANIZATION_PASSWORD" }}'
+      - "organization/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: team-postgres
+    namespace: team-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_TEAM_PASSWORD" }}'
+      - "team/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: storage-postgres
+    namespace: storage-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_STORAGE_PASSWORD" }}'
+      - "storage/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: plan-postgres
+    namespace: plan-service
+    chart: bitnami/postgresql
+    values:
+      - image:
+          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+        global:
+          postgresql:
+            auth:
+              password: '{{ env "ORIGIN_PLAN_PASSWORD" }}'
+      - "plan/postgres-values.yaml"
+    needs:
+      - kafka/kafka-stack
+  - name: debezium-connector
+    chart: ecr/debezium-connector
+    version: 0.1.20
+    values:
+      - "connector-values.yaml"
+    needs:
+      - auth-service/auth-postgres
+      - websocket-service/websocket-postgres
+      - job-service/job-postgres
+      - user-profile-service/user-profile-postgres
+      - user-preference-service/user-preference-postgres
+      - organization-service/organization-postgres
+      - team-service/team-postgres
+      - storage-service/storage-postgres
+      - plan-service/plan-postgres

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "websocket-service.name" . }}
+  namespace: {{ .Values.global.services.websocketService.namespace }}
+  labels:
+    {{- include "websocket-service.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.global.services.websocketService.port }}
+      targetPort: websocket
+      protocol: TCP
+  selector:
+    {{- include "websocket-service.selectorLabels" . | nindent 4 }}

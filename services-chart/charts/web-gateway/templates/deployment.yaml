@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "web-gateway.name" . }}
+  namespace: {{ .Values.global.services.webGateway.namespace }}
+  labels:
+    {{- include "web-gateway.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "web-gateway.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "web-gateway.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.containerPort }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: REQUIRE_HTTPS
+              value: "false"
+            - name: FRONT_ORIGINS
+              value: "{{ .Values.global.frontOrigins }}"
+            - name: JWK_SET_URI
+              value: "{{ .Values.global.jwkSetUri }}"
+            - name: WEB_GATEWAY_PORT
+              value: "{{ .Values.containerPort }}"
+            - name: JOB_SERVICE_HOST
+              value: "{{ .Values.global.services.jobService.name }}.{{ .Values.global.services.jobService.namespace }}.svc.cluster.local"
+            - name: JOB_SERVICE_PORT
+              value: "{{ .Values.global.services.jobService.ports.grpcPort }}"
+            - name: USER_PROFILE_SERVICE_HOST
+              value: "{{ .Values.global.services.userProfileService.name }}.{{ .Values.global.services.userProfileService.namespace }}.svc.cluster.local"
+            - name: USER_PROFILE_SERVICE_PORT
+              value: "{{ .Values.global.services.userProfileService.ports.grpcPort }}"
+            - name: USER_PREFERENCE_SERVICE_HOST
+              value: "{{ .Values.global.services.userPreferenceService.name }}.{{ .Values.global.services.userPreferenceService.namespace }}.svc.cluster.local"
+            - name: USER_PREFERENCE_SERVICE_PORT
+              value: "{{ .Values.global.services.userPreferenceService.ports.grpcPort }}"
+            - name: ORGANIZATION_SERVICE_HOST
+              value: "{{ .Values.global.services.organizationService.name }}.{{ .Values.global.services.organizationService.namespace }}.svc.cluster.local"
+            - name: ORGANIZATION_SERVICE_PORT
+              value: "{{ .Values.global.services.organizationService.ports.grpcPort }}"
+            - name: TEAM_SERVICE_HOST
+              value: "{{ .Values.global.services.teamService.name }}.{{ .Values.global.services.teamService.namespace }}.svc.cluster.local"
+            - name: TEAM_SERVICE_PORT
+              value: "{{ .Values.global.services.teamService.ports.grpcPort }}"
+            - name: PLAN_SERVICE_HOST
+              value: "{{ .Values.global.services.planService.name }}.{{ .Values.global.services.planService.namespace }}.svc.cluster.local"
+            - name: PLAN_SERVICE_PORT
+              value: "{{ .Values.global.services.planService.ports.grpcPort }}"
+            - name: STORAGE_SERVICE_HOST
+              value: "{{ .Values.global.services.storageService.name }}.{{ .Values.global.services.storageService.namespace }}.svc.cluster.local"
+            - name: STORAGE_SERVICE_PORT
+              value: "{{ .Values.global.services.storageService.ports.grpcPort }}"
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

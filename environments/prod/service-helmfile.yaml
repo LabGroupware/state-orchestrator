@@ -1,0 +1,25 @@
+helmDefaults:
+  wait: true
+  timeout: 600
+  # atomic: true       # インストール失敗時に自動ロールバック
+  # concurrent: 1      # 同時実行数を1に制限
+
+repositories:
+  - name: ecr
+    url: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+    oci: true
+    username: 'AWS'
+    password: '{{ requiredEnv "ECR_PASSWORD" }}'
+
+releases:
+  - name: auth
+    namespace: auth-service
+    chart: ecr/auth-server
+    version: 0.1.4
+    values:
+      - "auth/app-values.yaml"
+  - name: service
+    chart: ecr/services-chart
+    version: 0.1.0
+    values:
+      - "service-value.yaml"

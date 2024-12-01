@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "user-preference-service.name" . }}
+  namespace: {{ .Values.global.services.userPreferenceService.namespace }}
+  labels:
+    {{- include "user-preference-service.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.global.services.userPreferenceService.ports.grpcPort }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+  selector:
+    {{- include "user-preference-service.selectorLabels" . | nindent 4 }}

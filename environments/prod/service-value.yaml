@@ -1,0 +1,282 @@
+global:
+  frontOrigins: http://localhost:3000
+  jwkSetUri: http://auth.auth-service.svc.cluster.local/oauth2/jwks
+  kafka:
+    server: kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092
+  services:
+    webGateway:
+      name: web-gateway
+      namespace: web-gateway
+      port: 80
+    websocketService:
+      name: websocket
+      namespace: websocket-service
+      port: 80
+    jobService:
+      name: job
+      namespace: job-service
+      ports:
+        grpcPort: 9090
+    userProfileService:
+      name: user-profile
+      namespace: user-profile-service
+      ports:
+        grpcPort: 9090
+    userPreferenceService:
+      name: user-preference
+      namespace: user-preference-service
+      ports:
+        grpcPort: 9090
+    organizationService:
+      name: organization
+      namespace: organization-service
+      ports:
+        grpcPort: 9090
+    teamService:
+      name: team
+      namespace: team-service
+      ports:
+        grpcPort: 9090
+    planService:
+      name: plan
+      namespace: plan-service
+      ports:
+        grpcPort: 9090
+    storageService:
+      name: storage
+      namespace: storage-service
+      ports:
+        grpcPort: 9090
+
+web-gateway:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-web-gateway
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: ""
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  istio:
+    enabled: true
+    virtualServiceName: web-gateway
+    namespace: istio-system
+    hosts:
+      - web.state.api.cresplanex.org
+    gateway: public-gateway
+websocket-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-ws-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "websocket-sa"
+  db:
+    url: "jdbc:postgresql://websocket-postgres-postgresql.websocket-service.svc.cluster.local:5432/websocket"
+    username: postgres
+    secretName: websocket-db-secrets
+    secretPasswordKey: password
+  redis:
+    host: localhost
+    port: 6379
+    secretName: websocket-redis-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: websocket-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  istio:
+    enabled: true
+    virtualServiceName: websocket
+    namespace: istio-system
+    hosts:
+      - ws.state.api.cresplanex.org
+    gateway: public-gateway
+job-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-job-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "job-sa"
+  db:
+    url: "jdbc:postgresql://job-postgres-postgresql.job-service.svc.cluster.local:5432/job"
+    username: postgres
+    secretName: job-db-secrets
+    secretPasswordKey: password
+  redis:
+    host: localhost
+    port: 6379
+    secretName: job-redis-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: job-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+user-profile-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-user-profile-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "user-profile-sa"
+  db:
+    url: "jdbc:postgresql://user-profile-postgres-postgresql.user-profile-service.svc.cluster.local:5432/user-profile"
+    username: postgres
+    secretName: user-profile-db-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: user-profile-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+user-preference-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-user-preference-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "user-preference-sa"
+  db:
+    url: "jdbc:postgresql://user-preference-postgres-postgresql.user-preference-service.svc.cluster.local:5432/user-preference"
+    username: postgres
+    secretName: user-preference-db-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: user-preference-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+organization-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-organization-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "organization-sa"
+  db:
+    url: "jdbc:postgresql://organization-postgres-postgresql.organization-service.svc.cluster.local:5432/organization"
+    username: postgres
+    secretName: organization-db-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: organization-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+team-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-team-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "team-sa"
+  db:
+    url: "jdbc:postgresql://team-postgres-postgresql.team-service.svc.cluster.local:5432/team"
+    username: postgres
+    secretName: team-db-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: team-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+plan-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-plan-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "plan-sa"
+  db:
+    url: "jdbc:postgresql://plan-postgres-postgresql.plan-service.svc.cluster.local:5432/plan"
+    username: postgres
+    secretName: plan-db-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: plan-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+storage-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-storage-service
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  serviceAccount:
+    name: "storage-sa"
+  db:
+    url: "jdbc:postgresql://storage-postgres-postgresql.storage-service.svc.cluster.local:5432/storage"
+    username: postgres
+    secretName: storage-db-secrets
+    secretPasswordKey: password
+  secret:
+    secretName: storage-app-secrets
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80

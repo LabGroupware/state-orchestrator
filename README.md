@@ -17,6 +17,11 @@ asdf install
 
 ### Helm Push
 
+#### Service
+```sh
+./helm-push.sh services-chart
+```
+
 #### Debezium Connector
 ``` sh
 ./helm-push.sh debezium-connector

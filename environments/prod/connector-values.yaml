@@ -1,0 +1,104 @@
+base:
+  name: "debezium-connector"
+  connector:
+    connectHost: kafka-connect.kafka.svc.cluster.local
+    connectPort: 8083
+authServer:
+  enabled: true
+  namespace: "auth-service"
+  serviceAccount: "auth-sa"
+  database:
+    hostname: "auth-postgres-postgresql.auth-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "auth"
+    passwordSecrets: "auth-db-secrets"
+    passwordSecretKey: "password"
+jobService:
+  enabled: true
+  namespace: "job-service"
+  serviceAccount: "job-sa"
+  database:
+    hostname: "job-postgres-postgresql.job-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "job"
+    passwordSecrets: "job-db-secrets"
+    passwordSecretKey: "password"
+websocketService:
+  enabled: true
+  namespace: "websocket-service"
+  serviceAccount: "websocket-sa"
+  database:
+    hostname: "websocket-postgres-postgresql.websocket-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "websocket"
+    passwordSecrets: "websocket-db-secrets"
+    passwordSecretKey: "password"
+userProfileService:
+  enabled: true
+  namespace: "user-profile-service"
+  serviceAccount: "user-profile-sa"
+  database:
+    hostname: "user-profile-postgres-postgresql.user-profile-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "user-profile"
+    passwordSecrets: "user-profile-db-secrets"
+    passwordSecretKey: "password"
+userPreferenceService:
+  enabled: true
+  namespace: "user-preference-service"
+  serviceAccount: "user-preference-sa"
+  database:
+    hostname: "user-preference-postgres-postgresql.user-preference-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "user-preference"
+    passwordSecrets: "user-preference-db-secrets"
+    passwordSecretKey: "password"
+organizationService:
+  enabled: true
+  namespace: "organization-service"
+  serviceAccount: "organization-sa"
+  database:
+    hostname: "organization-postgres-postgresql.organization-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "organization"
+    passwordSecrets: "organization-db-secrets"
+    passwordSecretKey: "password"
+teamService:
+  enabled: true
+  namespace: "team-service"
+  serviceAccount: "team-sa"
+  database:
+    hostname: "team-postgres-postgresql.team-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "team"
+    passwordSecrets: "team-db-secrets"
+    passwordSecretKey: "password"
+planService:
+  enabled: true
+  namespace: "plan-service"
+  serviceAccount: "plan-sa"
+  database:
+    hostname: "plan-postgres-postgresql.plan-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "plan"
+    passwordSecrets: "plan-db-secrets"
+    passwordSecretKey: "password"
+storageService:
+  enabled: true
+  namespace: "storage-service"
+  serviceAccount: "storage-sa"
+  database:
+    hostname: "storage-postgres-postgresql.storage-service.svc.cluster.local"
+    port: 5432
+    username: "svcuser"
+    dbname: "storage"
+    passwordSecrets: "storage-db-secrets"
+    passwordSecretKey: "password"

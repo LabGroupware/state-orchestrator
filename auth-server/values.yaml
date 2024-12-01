@@ -1,12 +1,20 @@
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
-namespace: "auth"
+namespace: "auth-service"
+name: "auth"
 image:
   repository: ablankz/nova-auth-service
   pullPolicy: IfNotPresent
-  tag: "1.0.0"
+  tag: "latest"
 
 containerPort: 8080
+
+app:
+  secretName: auth-app-secret
+  secretPasswordKey: custom
+  jwt:
+    secretName: auth-jwt-secret
+    secretPasswordKey: jwt
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -62,7 +70,7 @@ istio:
   virtualServiceName: auth
   namespace: istio-system
   hosts:
-    - auth.account.cresplanex.org
+    - auth.state.api.cresplanex.org
   gateway: public-gateway
 
 resources: {}

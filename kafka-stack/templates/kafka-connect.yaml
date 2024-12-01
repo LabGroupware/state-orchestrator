@@ -1,30 +1,64 @@
 {{- if .Values.kafkaConnect.enabled }}
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaConnect
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-    name: {{ .Values.kafkaConnect.name }}
-    namespace: {{ .Values.base.namespace.name }}
-    labels:
-        strimzi.io/cluster: {{ .Values.kafkaCluster.name }}
+  name: {{ .Values.kafkaConnect.name }}
+  namespace: {{ .Values.base.namespace.name }}
+  labels:
+    strimzi.io/cluster: {{ .Values.kafkaCluster.name }}
 spec:
-    replicas: {{ .Values.kafkaConnect.replicas }}
-    bootstrapServers: {{ .Values.kafkaConnect.bootstrapServers }}
-    config:
-    {{- range $key, $value := .Values.kafkaConnect.config }}
-        {{ $key }}: {{ $value }}
-    {{- end }}
-    build:
-        output:
-            type: {{ .Values.kafkaConnect.build.output.type }}
-            image: {{ .Values.kafkaConnect.build.output.image }}
-        plugins: []
-        # {{- range .Values.kafkaConnect.build.plugins }}
-        #     - name: {{ .name }}
-        #       artifacts: 
-        #       {{- range .artifacts }}
-        #         - group: {{ .group }}
-        #           artifact: {{ .artifact }}
-        #           version: {{ .version }}
-        #       {{- end }}
-        # {{- end }}
+  replicas: {{ .Values.kafkaConnect.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.kafkaConnect.name }}
+      app.kubernetes.io/instance: "{{ .Values.kafkaConnect.name }}-connect"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.kafkaConnect.name }}
+        app.kubernetes.io/instance: "{{ .Values.kafkaConnect.name }}-connect"
+    spec:
+      containers:
+        - name: connect
+          image: "{{ .Values.kafkaConnect.image.repository }}:{{ .Values.kafkaConnect.image.tag }}"
+          imagePullPolicy: {{ .Values.kafkaConnect.image.pullPolicy }}
+          ports:
+            - containerPort: 8083
+              name: connect-port
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: {{ .Values.kafkaConnect.bootstrapServers }}
+            - name: GROUP_ID
+              value: "{{ .Values.kafkaConnect.config.group_id }}"
+            - name: CONFIG_STORAGE_TOPIC
+              value: "{{ .Values.kafkaConnect.config.config_storage_topic }}"
+            - name: OFFSET_STORAGE_TOPIC
+              value: "{{ .Values.kafkaConnect.config.offset_storage_topic }}"
+            - name: STATUS_STORAGE_TOPIC
+              value: "{{ .Values.kafkaConnect.config.status_storage_topic }}"
+            {{- range .Values.kafkaConnect.additionalEnv }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
+          resources:
+            {{- toYaml .Values.kafkaConnect.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kafkaConnect.name }}
+  namespace: {{ .Values.base.namespace.name }}
+  labels:
+    strimzi.io/cluster: {{ .Values.kafkaCluster.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.kafkaConnect.port }}
+      targetPort: connect-port
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ .Values.kafkaConnect.name }}
+    app.kubernetes.io/instance: "{{ .Values.kafkaConnect.name }}-connect"
 {{- end }}
+
