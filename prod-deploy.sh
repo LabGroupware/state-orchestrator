@@ -86,4 +86,13 @@ export ORIGIN_ORGANIZATION_PASSWORD
 export ORIGIN_PLAN_PASSWORD
 export ORIGIN_STORAGE_PASSWORD
 
-helmfile apply -f environments/prod/helmfile.yaml
+helm repo add strimzi https://strimzi.io/charts/
+helm repo update
+
+helm upgrade \
+--install core-kafka-operator \
+strimzi/strimzi-kafka-operator \
+--namespace kafka \
+--wait && \
+helmfile apply -f environments/prod/helmfile.yaml && \
+helmfile apply -f environments/prod/service-helmfile.yaml

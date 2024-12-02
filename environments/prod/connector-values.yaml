@@ -44,7 +44,7 @@ userProfileService:
     hostname: "user-profile-postgres-postgresql.user-profile-service.svc.cluster.local"
     port: 5432
     username: "svcuser"
-    dbname: "user-profile"
+    dbname: "user_profile"
     passwordSecrets: "user-profile-db-secrets"
     passwordSecretKey: "password"
 userPreferenceService:
@@ -55,7 +55,7 @@ userPreferenceService:
     hostname: "user-preference-postgres-postgresql.user-preference-service.svc.cluster.local"
     port: 5432
     username: "svcuser"
-    dbname: "user-preference"
+    dbname: "user_preference"
     passwordSecrets: "user-preference-db-secrets"
     passwordSecretKey: "password"
 organizationService:

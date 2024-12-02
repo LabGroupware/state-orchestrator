@@ -27,7 +27,7 @@ data:
         "key.converter.schemas.enable": "true",
         "value.converter.schemas.enable": "true",
         "transforms": "messaging",
-        "transforms.messaging.type": "org.cresstorageex.core.cdc.debezium.TransactionalMessaging"
+        "transforms.messaging.type": "org.cresplanex.core.cdc.debezium.TransactionalMessaging"
       }
     }
   init.sql: |

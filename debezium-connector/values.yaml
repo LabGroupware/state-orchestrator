@@ -44,7 +44,7 @@ userProfileService:
     hostname: "postgres"
     port: 5432
     username: "postgres"
-    dbname: "user-profile"
+    dbname: "user_profile"
     passwordSecrets: "user-profile-secrets"
     passwordSecretKey: "password"
 userPreferenceService:
@@ -55,7 +55,7 @@ userPreferenceService:
     hostname: "postgres"
     port: 5432
     username: "postgres"
-    dbname: "user-preference"
+    dbname: "user_preference"
     passwordSecrets: "user-preference-secrets"
     passwordSecretKey: "password"
 organizationService:

@@ -1,0 +1,88 @@
+global:
+  frontOrigins: http://localhost:3000
+  jwkSetUri: http://localhost:8080/oauth2/jwks
+  kafka:
+    server: localhost:9092
+  services:
+    webGateway:
+      name: web-gateway
+      namespace: web-gateway
+      port: 80
+    websocketService:
+      name: websocket
+      namespace: websocket
+      port: 80
+    jobService:
+      name: job-service
+      namespace: job-service
+      ports:
+        grpcPort: 9090
+    userProfileService:
+      name: user-profile-service
+      namespace: user-profile-service
+      ports:
+        grpcPort: 9090
+    userPreferenceService:
+      name: user-preference-service
+      namespace: user-preference-service
+      ports:
+        grpcPort: 9090
+    organizationService:
+      name: organization-service
+      namespace: organization-service
+      ports:
+        grpcPort: 9090
+    teamService:
+      name: team-service
+      namespace: team-service
+      ports:
+        grpcPort: 9090
+    planService:
+      name: plan-service
+      namespace: plan-service
+      ports:
+        grpcPort: 9090
+    storageService:
+      name: storage-service
+      namespace: storage-service
+      ports:
+        grpcPort: 9090
+
+websocket-service:
+  enabled: true
+  replicaCount: 1
+  resources: {}
+  image:
+    repository: ablankz/nova-ws-service
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  serviceAccount:
+    name: ""
+  db:
+    url: "jdbc:postgresql://localhost:5432/websocket"
+    username: postgres
+    secretName: websocket-db-secret
+    secretPasswordKey: password
+  redis:
+    host: localhost
+    port: 6379
+    secretName: websocket-redis-secret
+    secretPasswordKey: password
+  secret:
+    secretName: websocket-app-secret
+    secretPasswordKey: custom
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  volumes: []
+  volumeMounts: []
+  istio:
+    enabled: true
+    virtualServiceName: websocket
+    namespace: istio-system
+    hosts:
+      - ws.state.api.cresplanex.org
+    gateway: public-gateway

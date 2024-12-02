@@ -16,6 +16,7 @@ secret:
 
 containerPorts:
   grpcPort: 9090
+  httpPort: 8080
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -61,16 +62,17 @@ livenessProbe:
   httpGet:
     path: /actuator/health
     port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 10
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  periodSeconds: 30
 
 readinessProbe:
   httpGet:
     path: /actuator/health
     port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 10
-
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  periodSeconds: 30
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
   enabled: false

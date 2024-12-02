@@ -28,7 +28,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      # serviceAccountName: {{ .Values.serviceAccount.name }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -62,31 +62,31 @@ spec:
               value: "{{ .Values.containerPort }}"
             - name: JOB_SERVICE_HOST
               value: "{{ .Values.global.services.jobService.name }}.{{ .Values.global.services.jobService.namespace }}.svc.cluster.local"
-            - name: JOB_SERVICE_PORT
+            - name: JOB_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.jobService.ports.grpcPort }}"
             - name: USER_PROFILE_SERVICE_HOST
               value: "{{ .Values.global.services.userProfileService.name }}.{{ .Values.global.services.userProfileService.namespace }}.svc.cluster.local"
-            - name: USER_PROFILE_SERVICE_PORT
+            - name: USER_PROFILE_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.userProfileService.ports.grpcPort }}"
             - name: USER_PREFERENCE_SERVICE_HOST
               value: "{{ .Values.global.services.userPreferenceService.name }}.{{ .Values.global.services.userPreferenceService.namespace }}.svc.cluster.local"
-            - name: USER_PREFERENCE_SERVICE_PORT
+            - name: USER_PREFERENCE_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.userPreferenceService.ports.grpcPort }}"
             - name: ORGANIZATION_SERVICE_HOST
               value: "{{ .Values.global.services.organizationService.name }}.{{ .Values.global.services.organizationService.namespace }}.svc.cluster.local"
-            - name: ORGANIZATION_SERVICE_PORT
+            - name: ORGANIZATION_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.organizationService.ports.grpcPort }}"
             - name: TEAM_SERVICE_HOST
               value: "{{ .Values.global.services.teamService.name }}.{{ .Values.global.services.teamService.namespace }}.svc.cluster.local"
-            - name: TEAM_SERVICE_PORT
+            - name: TEAM_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.teamService.ports.grpcPort }}"
             - name: PLAN_SERVICE_HOST
               value: "{{ .Values.global.services.planService.name }}.{{ .Values.global.services.planService.namespace }}.svc.cluster.local"
-            - name: PLAN_SERVICE_PORT
+            - name: PLAN_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.planService.ports.grpcPort }}"
             - name: STORAGE_SERVICE_HOST
               value: "{{ .Values.global.services.storageService.name }}.{{ .Values.global.services.storageService.namespace }}.svc.cluster.local"
-            - name: STORAGE_SERVICE_PORT
+            - name: STORAGE_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.storageService.ports.grpcPort }}"
       {{- with .Values.volumes }}
       volumes:

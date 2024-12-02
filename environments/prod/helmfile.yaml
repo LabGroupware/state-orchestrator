@@ -7,8 +7,6 @@ helmDefaults:
 repositories:
   - name: bitnami
     url: https://charts.bitnami.com/bitnami
-  - name: strimzi
-    url: https://strimzi.io/charts/
   - name: ecr
     url: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
     oci: true
@@ -16,15 +14,10 @@ repositories:
     password: '{{ requiredEnv "ECR_PASSWORD" }}'
 
 releases:
-  - name: core-kafka-operator
-    namespace: kafka
-    chart: strimzi/strimzi-kafka-operator
   - name: kafka-stack
     namespace: kafka
     chart: ecr/kafka-stack
     version: 0.1.20
-    needs:
-      - kafka/core-kafka-operator
   - name: auth-redis
     namespace: auth-service
     chart: bitnami/redis
@@ -165,7 +158,7 @@ releases:
       - kafka/kafka-stack
   - name: debezium-connector
     chart: ecr/debezium-connector
-    version: 0.1.20
+    version: 0.1.22
     values:
       - "connector-values.yaml"
     needs:

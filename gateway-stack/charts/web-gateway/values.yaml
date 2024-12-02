@@ -34,18 +34,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-db:
-  url: "jdbc:postgresql://localhost:5432/job"
-  username: postgres
-  secretName: job-db-secret
-  secretPasswordKey: password
-redis:
-  host: localhost
-  port: 6379
-  secretName: job-redis-secret
-  secretPasswordKey: password
 secret:
-  secretName: job-app-secret
+  secretName: web-gateway-app-secret
   secretPasswordKey: custom
 istio:
   enabled: true
@@ -72,15 +62,17 @@ livenessProbe:
   httpGet:
     path: /actuator/health
     port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 10
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  periodSeconds: 30
 
 readinessProbe:
   httpGet:
     path: /actuator/health
     port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 10
+  initialDelaySeconds: 30
+  failureThreshold: 10
+  periodSeconds: 30
 
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:

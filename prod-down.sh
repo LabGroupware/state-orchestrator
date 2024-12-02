@@ -17,6 +17,7 @@ ORIGIN_ORGANIZATION_PASSWORD=$(kubectl get secret --namespace "organization-serv
 ORIGIN_PLAN_PASSWORD=$(kubectl get secret --namespace "plan-service" plan-db-secrets -o jsonpath="{.data.password}" | base64 -d)
 ORIGIN_STORAGE_PASSWORD=$(kubectl get secret --namespace "storage-service" storage-db-secrets -o jsonpath="{.data.password}" | base64 -d)
 
+helmfile delete -f environments/prod/service-helmfile.yaml
 helmfile delete -f environments/prod/helmfile.yaml
 
 kubectl delete -f ./secret/manifests

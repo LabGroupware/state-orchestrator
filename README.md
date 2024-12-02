@@ -15,6 +15,19 @@ asdf plugin add istioctl
 asdf install
 ```
 
+### Debug
+``` sh
+kubectl run debug-pod --rm -it --image=alpine:latest -- sh
+```
+
+```sh
+apk add --no-cache curl wget net-tools iproute2 bind-tools busybox-extras go
+go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+export PATH=$PATH:$(go env GOPATH)/bin
+
+grpcurl --plaintext -d '{}' job-service.job-service:9090 job.v1.JobService/CreateJob
+```
+
 ### Helm Push
 
 #### Service
@@ -35,6 +48,21 @@ asdf install
 #### Kafka Stack
 ```sh
 ./helm-push.sh kafka-stack
+```
+
+#### Gateway Stack
+```sh
+./helm-push.sh gateway-stack
+```
+
+#### Job Stack
+```sh
+./helm-push.sh job-stack
+```
+
+#### Websocket Stack
+```sh
+./helm-push.sh websocket-stack
 ```
 
 ### Deploy

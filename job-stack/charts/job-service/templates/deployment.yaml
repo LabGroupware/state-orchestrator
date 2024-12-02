@@ -54,6 +54,8 @@ spec:
           env:
             - name: JOB_SERVICE_GRPC_PORT
               value: "{{ .Values.containerPorts.grpcPort }}"
+            - name: JOB_SERVICE_PORT
+              value: "{{ .Values.containerPorts.httpPort }}"
             - name: DB_URL
               value: "{{ .Values.db.url }}"
             - name: DB_USERNAME

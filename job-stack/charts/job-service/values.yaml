@@ -1,11 +1,26 @@
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 image:
-  repository: ablankz/nova-ws-service
+  repository: ablankz/nova-job-service
   pullPolicy: IfNotPresent
   tag: "latest"
 
-containerPort: 8080
+db:
+  url: "jdbc:postgresql://localhost:5432/job"
+  username: postgres
+  secretName: job-db-secret
+  secretPasswordKey: password
+redis:
+  host: localhost
+  port: 6379
+  secretName: job-redis-secret
+  secretPasswordKey: password
+secret:
+  secretName: job-app-secret
+  secretPasswordKey: custom
+
+containerPorts:
+  grpcPort: 9090
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -34,27 +49,6 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-db:
-  url: "jdbc:postgresql://localhost:5432/websocket"
-  username: postgres
-  secretName: websocket-db-secret
-  secretPasswordKey: password
-redis:
-  host: localhost
-  port: 6379
-  secretName: websocket-redis-secret
-  secretPasswordKey: password
-secret:
-  secretName: websocket-app-secret
-  secretPasswordKey: custom
-istio:
-  enabled: true
-  virtualServiceName: websocket
-  namespace: istio-system
-  hosts:
-    - websocket.state.api.cresplanex.org
-  gateway: public-gateway
-
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -73,14 +67,14 @@ livenessProbe:
     path: /actuator/health
     port: 8080
   initialDelaySeconds: 5
-  periodSeconds: 10
+  periodSeconds: 30
 
 readinessProbe:
   httpGet:
     path: /actuator/health
     port: 8080
   initialDelaySeconds: 5
-  periodSeconds: 10
+  periodSeconds: 30
 
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:

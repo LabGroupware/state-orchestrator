@@ -54,12 +54,14 @@ spec:
           env:
             - name: TEAM_SERVICE_GRPC_PORT
               value: "{{ .Values.containerPorts.grpcPort }}"
+            - name: TEAM_SERVICE_PORT
+              value: "{{ .Values.containerPorts.httpPort }}"
             - name: DB_URL
               value: "{{ .Values.db.url }}"
             - name: DB_USERNAME
               value: "{{ .Values.db.username }}"
             - name: JOB_SERVICE_HOST
-              value: "{{ .Values.global.services.jobService.host }}.{{ .Values.global.services.jobService.namespace }}.svc.cluster.local"
+              value: "{{ .Values.global.services.jobService.name }}.{{ .Values.global.services.jobService.namespace }}.svc.cluster.local"
             - name: JOB_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.jobService.ports.grpcPort }}"
             - name: KAFKA_SERVER

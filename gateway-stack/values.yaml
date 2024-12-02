@@ -1,0 +1,81 @@
+global:
+  frontOrigins: http://localhost:3000
+  jwkSetUri: http://localhost:8080/oauth2/jwks
+  kafka:
+    server: localhost:9092
+  services:
+    webGateway:
+      name: web-gateway
+      namespace: web-gateway
+      port: 80
+    websocketService:
+      name: websocket
+      namespace: websocket
+      port: 80
+    jobService:
+      name: job-service
+      namespace: job-service
+      ports:
+        grpcPort: 9090
+    userProfileService:
+      name: user-profile-service
+      namespace: user-profile-service
+      ports:
+        grpcPort: 9090
+    userPreferenceService:
+      name: user-preference-service
+      namespace: user-preference-service
+      ports:
+        grpcPort: 9090
+    organizationService:
+      name: organization-service
+      namespace: organization-service
+      ports:
+        grpcPort: 9090
+    teamService:
+      name: team-service
+      namespace: team-service
+      ports:
+        grpcPort: 9090
+    planService:
+      name: plan-service
+      namespace: plan-service
+      ports:
+        grpcPort: 9090
+    storageService:
+      name: storage-service
+      namespace: storage-service
+      ports:
+        grpcPort: 9090
+
+web-gateway:
+  enabled: true
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+  image:
+    repository: ablankz/nova-web-gateway
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  serviceAccount:
+    name: ""
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  volumes: []
+  volumeMounts: []
+  istio:
+    enabled: true
+    virtualServiceName: web-gateway
+    namespace: istio-system
+    hosts:
+      - web.state.api.cresplanex.org
+    gateway: public-gateway

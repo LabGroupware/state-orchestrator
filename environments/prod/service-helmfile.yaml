@@ -15,11 +15,28 @@ releases:
   - name: auth
     namespace: auth-service
     chart: ecr/auth-server
-    version: 0.1.4
+    version: 0.1.10
     values:
       - "auth/app-values.yaml"
+  - name: job-service
+    namespace: job-service
+    chart: ecr/job-stack
+    version: 0.1.4
+    values:
+      - "job/app-values.yaml"
+    needs:
+      - auth-service/auth
   - name: service
     chart: ecr/services-chart
-    version: 0.1.0
+    version: 0.1.7
     values:
       - "service-value.yaml"
+    needs:
+      - job-service/job-service
+  - name: gateway
+    chart: ecr/gateway-stack
+    version: 0.1.4
+    values:
+      - "gateway/app-values.yaml"
+    needs:
+      - service
