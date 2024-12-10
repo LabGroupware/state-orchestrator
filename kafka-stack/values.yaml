@@ -6,6 +6,13 @@ kafkaCluster:
   kafka:
     version: 3.8.0
     metadataVersion: 3.8-IV0
+    resources:
+      requests:
+          memory: "2Gi"
+          cpu: "1"
+      limits:
+          memory: "3.8Gi"
+          cpu: "2"
     replicas: 1
     listeners:
       - name: plain
@@ -92,7 +99,13 @@ kafkaConnect:
     offset_storage_topic: connect-offsets
     status_storage_topic: connect-status
   additionalEnv: []
-  resources: {}
+  resources:
+    requests:
+      cpu: 1
+      memory: 2Gi
+    limits:
+      cpu: 1.2
+      memory: 3.8Gi
     # -1 means it will use the default replication factor configured in the broker
     # config.storage.replication.factor: -1
     # offset.storage.replication.factor: -1

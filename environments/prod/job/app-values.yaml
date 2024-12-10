@@ -53,15 +53,15 @@ job-service:
   replicaCount: 1
   resources:
     requests:
-      memory: "1.5Gi"
-      cpu: "250m"
-    limits:
       memory: "2Gi"
+      cpu: "800m"
+    limits:
+      memory: "2.5Gi"
       cpu: "1"
   image:
     repository: ablankz/nova-job-service
     pullPolicy: IfNotPresent
-    tag: "1.0.1"
+    tag: "1.0.3"
   serviceAccount:
     name: "job-sa"
   db:
@@ -94,3 +94,8 @@ job-service:
   - name: job-app-secrets-store
     mountPath: "/mnt/app-secrets-store"
     readOnly: true
+  kafka:
+    jobSubscribeSuccess: true
+    jobSubscribeFailed: true
+    jobSubscribeInitialized: true
+    jobSubscribeProcessed: true

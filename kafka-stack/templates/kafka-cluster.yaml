@@ -56,6 +56,8 @@ metadata:
         strimzi.io/node-pools: enabled
         strimzi.io/kraft: enabled
 spec:
+    resources:
+        {{- toYaml .Values.kafkaCluster.kafka.resources | nindent 12 }}
     kafka:
         version: {{ .Values.kafkaCluster.kafka.version }}
         metadataVersion: {{ .Values.kafkaCluster.kafka.metadataVersion }}

@@ -13,6 +13,13 @@ serviceAccount:
 readReplicas:
   replicaCount: 0
 primary:
+  resources:
+    requests:
+      memory: "0.8Gi"
+      cpu: "600m"
+    limits:
+      memory: "1.2Gi"
+      cpu: "1"
   containerSecurityContext:
     readOnlyRootFilesystem: false
   persistence:

@@ -5,6 +5,13 @@ auth:
 serviceAccount:
   create: false
 master:
+  resources:
+    requests:
+      memory: "0.5Gi"
+      cpu: "800m"
+    limits:
+      memory: "1.5Gi"
+      cpu: "1.2"
   serviceAccount:
     create: false
     name: job-sa

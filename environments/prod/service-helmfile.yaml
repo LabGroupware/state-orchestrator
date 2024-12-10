@@ -21,7 +21,7 @@ releases:
   - name: job-service
     namespace: job-service
     chart: ecr/job-stack
-    version: 0.1.4
+    version: 0.1.7
     values:
       - "job/app-values.yaml"
     needs:
@@ -38,5 +38,12 @@ releases:
     version: 0.1.4
     values:
       - "gateway/app-values.yaml"
+    needs:
+      - service
+  - name: websocket
+    chart: ecr/websocket-stack
+    version: 0.1.1
+    values:
+      - "websocket/app-values.yaml"
     needs:
       - service

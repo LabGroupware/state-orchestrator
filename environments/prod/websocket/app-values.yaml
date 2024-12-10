@@ -50,18 +50,18 @@ global:
 
 websocket-service:
   enabled: true
-  replicaCount: 1
+  # replicaCount: 3
   resources:
     requests:
       memory: "1.5Gi"
-      cpu: "250m"
+      cpu: "400m"
     limits:
       memory: "2Gi"
       cpu: "1"
   image:
     repository: ablankz/nova-ws-service
     pullPolicy: IfNotPresent
-    tag: "1.0.3"
+    tag: "1.0.4"
   serviceAccount:
     name: "websocket-sa"
   db:

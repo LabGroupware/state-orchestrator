@@ -53,7 +53,7 @@ spec:
           {{- end }}
           env:
             - name: REQUIRE_HTTPS
-              value: "true"
+              value: "false"
             - name: FRONT_ORIGINS
               value: "{{ .Values.global.frontOrigins }}"
             - name: JWK_SET_URI

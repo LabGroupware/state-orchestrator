@@ -19,6 +19,7 @@ ORIGIN_STORAGE_PASSWORD=$(kubectl get secret --namespace "storage-service" stora
 
 helmfile delete -f environments/prod/service-helmfile.yaml
 helmfile delete -f environments/prod/helmfile.yaml
+helm uninstall core-kafka-operator --namespace kafka
 
 kubectl delete -f ./secret/manifests
 

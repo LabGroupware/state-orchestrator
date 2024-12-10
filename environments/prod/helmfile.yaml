@@ -17,7 +17,7 @@ releases:
   - name: kafka-stack
     namespace: kafka
     chart: ecr/kafka-stack
-    version: 0.1.20
+    version: 0.1.23
   - name: auth-redis
     namespace: auth-service
     chart: bitnami/redis

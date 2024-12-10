@@ -66,6 +66,14 @@ spec:
               value: "{{ .Values.redis.port }}"
             - name: KAFKA_SERVER
               value: "{{ .Values.global.kafka.server }}"
+            - name: JOB_SUBSCRIBE_SUCCESS
+              value: "{{ .Values.kafka.jobSubscribeSuccess }}"
+            - name: JOB_SUBSCRIBE_FAILED
+              value: "{{ .Values.kafka.jobSubscribeFailed }}"
+            - name: JOB_SUBSCRIBE_INITIALIZED
+              value: "{{ .Values.kafka.jobSubscribeInitialized }}"
+            - name: JOB_SUBSCRIBE_PROCESSED
+              value: "{{ .Values.kafka.jobSubscribeProcessed }}"
             - name: CUSTOM_SECRET
               valueFrom:
                 secretKeyRef:

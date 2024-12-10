@@ -53,8 +53,8 @@ user-profile-service:
   replicaCount: 1
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "200m"
+      memory: "1.2Gi"
+      cpu: "500m"
     limits:
       memory: "1.5Gi"
       cpu: "1"
@@ -94,8 +94,8 @@ user-preference-service:
   replicaCount: 1
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "200m"
+      memory: "1.2Gi"
+      cpu: "500m"
     limits:
       memory: "1.5Gi"
       cpu: "1"
@@ -135,8 +135,8 @@ organization-service:
   replicaCount: 1
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "200m"
+      memory: "1.2Gi"
+      cpu: "500m"
     limits:
       memory: "1.5Gi"
       cpu: "1"
@@ -176,8 +176,8 @@ team-service:
   replicaCount: 1
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "200m"
+      memory: "1.2Gi"
+      cpu: "500m"
     limits:
       memory: "1.5Gi"
       cpu: "1"
@@ -217,8 +217,8 @@ plan-service:
   replicaCount: 1
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "200m"
+      memory: "1.2Gi"
+      cpu: "500m"
     limits:
       memory: "1.5Gi"
       cpu: "1"
@@ -258,8 +258,8 @@ storage-service:
   replicaCount: 1
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "200m"
+      memory: "1.2Gi"
+      cpu: "500m"
     limits:
       memory: "1.5Gi"
       cpu: "1"
