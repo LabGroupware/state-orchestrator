@@ -35,15 +35,15 @@ releases:
       - job-service/job-service
   - name: gateway
     chart: ecr/gateway-stack
-    version: 0.1.4
+    version: 0.1.7
     values:
       - "gateway/app-values.yaml"
     needs:
       - service
-  - name: websocket
-    chart: ecr/websocket-stack
-    version: 0.1.1
-    values:
-      - "websocket/app-values.yaml"
-    needs:
-      - service
+  # - name: websocket
+  #   chart: ecr/websocket-stack
+  #   version: 0.1.1
+  #   values:
+  #     - "websocket/app-values.yaml"
+  #   needs:
+  #     - service

@@ -65,6 +65,8 @@ redis:
 kafka:
   server: localhost:9092
 
+javaOptions: "-Xmx256m -Xms256m"
+
 istio:
   enabled: true
   virtualServiceName: auth

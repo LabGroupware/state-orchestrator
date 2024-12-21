@@ -6,6 +6,11 @@ image:
   tag: "latest"
 
 containerPort: 8080
+maxThread: 200
+minThread: 10
+connectionTimeout: 20000
+acceptCount: 100
+
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -44,6 +49,7 @@ istio:
   hosts:
     - web.state.api.cresplanex.org
   gateway: public-gateway
+  timeout: 10s
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -76,6 +76,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.db.secretName }}
                   key: {{ .Values.db.secretPasswordKey }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.javaOptions }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

@@ -20,4 +20,5 @@ spec:
                 host: {{ include "web-gateway.name" . }}.{{ .Values.global.services.webGateway.namespace }}.svc.cluster.local
                 port:
                     number: {{ .Values.global.services.webGateway.port }}
+          timeout: {{ .Values.istio.timeout }}
 {{- end }}

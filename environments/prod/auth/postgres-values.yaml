@@ -1,3 +1,6 @@
+global:
+  security:
+    allowInsecureImages: true
 auth:
   username: svcuser
   existingSecret: auth-db-secrets

@@ -50,14 +50,15 @@ global:
 
 job-service:
   enabled: true
-  replicaCount: 1
+  replicaCount: 2
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   resources:
     requests:
       memory: "2Gi"
-      cpu: "800m"
+      cpu: "1.5"
     limits:
       memory: "2.5Gi"
-      cpu: "1"
+      cpu: "1.5"
   image:
     repository: ablankz/nova-job-service
     pullPolicy: IfNotPresent
@@ -77,12 +78,12 @@ job-service:
   secret:
     secretName: job-app-secrets
     secretPasswordKey: custom
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 75
+  # autoscaling:
+  #   enabled: true
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 75
   volumes:
   - name: job-app-secrets-store
     csi:
@@ -98,4 +99,4 @@ job-service:
     jobSubscribeSuccess: true
     jobSubscribeFailed: true
     jobSubscribeInitialized: true
-    jobSubscribeProcessed: true
+    jobSubscribeProcessed: false

@@ -50,6 +50,7 @@ global:
 
 websocket-service:
   enabled: true
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   # replicaCount: 3
   resources:
     requests:

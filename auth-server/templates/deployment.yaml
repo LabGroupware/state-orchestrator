@@ -86,6 +86,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.redis.secretName }}
                   key: {{ .Values.redis.secretPasswordKey }}
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.javaOptions }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

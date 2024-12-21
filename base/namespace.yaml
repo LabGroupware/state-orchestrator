@@ -2,75 +2,75 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: kafka
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: web-gateway
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: auth-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: websocket-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: job-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: user-profile-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: user-preference-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: team-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: organization-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: storage-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: plan-service
-  labels:
-    istio-injection: enabled
+  # labels:
+  #   istio-injection: enabled

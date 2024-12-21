@@ -8,6 +8,7 @@ app:
     secretPasswordKey: jwt
 serviceAccount:
   name: auth-sa
+javaOptions: "-XX:MaxDirectMemorySize=256M"
 image:
   tag: "1.0.4"
 db:

@@ -56,6 +56,14 @@ spec:
               value: "false"
             - name: FRONT_ORIGINS
               value: "{{ .Values.global.frontOrigins }}"
+            - name: MAX_THREAD
+              value: "{{ .Values.maxThread }}"
+            - name: MIN_THREAD
+              value: "{{ .Values.minThread }}"
+            - name: CONNECTION_TIMEOUT
+              value: "{{ .Values.connectionTimeout }}"
+            - name: ACCEPT_COUNT
+              value: "{{ .Values.acceptCount }}"
             - name: JWK_SET_URI
               value: "{{ .Values.global.jwkSetUri }}"
             - name: WEB_GATEWAY_PORT
@@ -88,6 +96,8 @@ spec:
               value: "{{ .Values.global.services.storageService.name }}.{{ .Values.global.services.storageService.namespace }}.svc.cluster.local"
             - name: STORAGE_SERVICE_GRPC_PORT
               value: "{{ .Values.global.services.storageService.ports.grpcPort }}"
+            - name: JAVA_TOOL_OPTIONS
+              value: {{ .Values.javaOptions }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

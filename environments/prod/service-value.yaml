@@ -58,10 +58,11 @@ user-profile-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   image:
     repository: ablankz/nova-user-profile-service
     pullPolicy: IfNotPresent
-    tag: "1.0.2"
+    tag: "1.0.4"
   serviceAccount:
     name: "user-profile-sa"
   db:
@@ -99,6 +100,7 @@ user-preference-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   image:
     repository: ablankz/nova-user-preference-service
     pullPolicy: IfNotPresent
@@ -140,6 +142,7 @@ organization-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   image:
     repository: ablankz/nova-organization-service
     pullPolicy: IfNotPresent
@@ -181,6 +184,7 @@ team-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   image:
     repository: ablankz/nova-team-service
     pullPolicy: IfNotPresent
@@ -222,6 +226,7 @@ plan-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   image:
     repository: ablankz/nova-plan-service
     pullPolicy: IfNotPresent
@@ -263,6 +268,7 @@ storage-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
+  javaOptions: "-XX:MaxDirectMemorySize=256M"
   image:
     repository: ablankz/nova-storage-service
     pullPolicy: IfNotPresent
