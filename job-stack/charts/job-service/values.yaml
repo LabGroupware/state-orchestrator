@@ -10,6 +10,11 @@ db:
   username: postgres
   secretName: job-db-secret
   secretPasswordKey: password
+  maxPoolSize: "20"
+  connectionTimeout: "60000"
+  idleTimeout: "60000"
+  maxLifetime: "1800000"
+  leakDetectionThreshold: "60000"
 redis:
   host: localhost
   port: 6379

@@ -82,9 +82,7 @@ releases:
     namespace: user-profile-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_USER_PROFILE_PASSWORD" }}'

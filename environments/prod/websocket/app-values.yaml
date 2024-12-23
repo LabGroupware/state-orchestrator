@@ -50,7 +50,7 @@ global:
 
 websocket-service:
   enabled: true
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   # replicaCount: 3
   resources:
     requests:
@@ -59,6 +59,10 @@ websocket-service:
     limits:
       memory: "2Gi"
       cpu: "1"
+  maxThread: 400
+  minThread: 10
+  connectionTimeout: 20000
+  acceptCount: 400
   image:
     repository: ablankz/nova-ws-service
     pullPolicy: IfNotPresent
@@ -70,6 +74,11 @@ websocket-service:
     username: svcuser
     secretName: websocket-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   redis:
     host: websocket-redis-master.websocket-service.svc.cluster.local
     port: 6379

@@ -56,6 +56,14 @@ spec:
               value: "false"
             - name: FRONT_ORIGINS
               value: "{{ .Values.global.frontOrigins }}"
+            - name: MAX_THREAD
+              value: "{{ .Values.maxThread }}"
+            - name: MIN_THREAD
+              value: "{{ .Values.minThread }}"
+            - name: CONNECTION_TIMEOUT
+              value: "{{ .Values.connectionTimeout }}"
+            - name: ACCEPT_COUNT
+              value: "{{ .Values.acceptCount }}"
             - name: JWK_SET_URI
               value: "{{ .Values.global.jwkSetUri }}"
             - name: WEB_SOCKET_PORT
@@ -85,8 +93,18 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.redis.secretName }}
                   key: {{ .Values.redis.secretPasswordKey }}
+            - name: DB_MAX_POOL_SIZE
+              value: "{{ .Values.db.maxPoolSize }}"
+            - name: DB_CONNECTION_TIMEOUT
+              value: "{{ .Values.db.connectionTimeout }}"
+            - name: DB_IDLE_TIMEOUT
+              value: "{{ .Values.db.idleTimeout }}"
+            - name: DB_MAX_LIFETIME
+              value: "{{ .Values.db.maxLifetime }}"
+            - name: DB_LEAK_DETECTION_THRESHOLD
+              value: "{{ .Values.db.leakDetectionThreshold }}"
             - name: JAVA_TOOL_OPTIONS
-              value: {{ .Values.javaOptions }}
+              value: "{{ .Values.javaOptions }}"
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

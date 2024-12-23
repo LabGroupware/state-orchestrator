@@ -28,7 +28,7 @@ releases:
       - auth-service/auth
   - name: service
     chart: ecr/services-chart
-    version: 0.1.7
+    version: 0.1.8
     values:
       - "service-value.yaml"
     needs:

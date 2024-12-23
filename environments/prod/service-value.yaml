@@ -48,6 +48,16 @@ global:
       ports:
         grpcPort: 9090
 
+            # - name: DB_MAX_POOL_SIZE
+            #   value: "{{ .Values.db.maxPoolSize }}"
+            # - name: DB_CONNECTION_TIMEOUT
+            #   value: "{{ .Values.db.connectionTimeout }}"
+            # - name: DB_IDLE_TIMEOUT
+            #   value: "{{ .Values.db.idleTimeout }}"
+            # - name: DB_MAX_LIFETIME
+            #   value: "{{ .Values.db.maxLifetime }}"
+            # - name: DB_LEAK_DETECTION_THRESHOLD
+            #   value: "{{ .Values.db.leakDetectionThreshold }}"
 user-profile-service:
   enabled: true
   replicaCount: 1
@@ -58,11 +68,11 @@ user-profile-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-user-profile-service
     pullPolicy: IfNotPresent
-    tag: "1.0.4"
+    tag: "1.0.5"
   serviceAccount:
     name: "user-profile-sa"
   db:
@@ -70,6 +80,11 @@ user-profile-service:
     username: svcuser
     secretName: user-profile-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   secret:
     secretName: user-profile-app-secrets
     secretPasswordKey: custom
@@ -100,7 +115,7 @@ user-preference-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-user-preference-service
     pullPolicy: IfNotPresent
@@ -112,6 +127,11 @@ user-preference-service:
     username: svcuser
     secretName: user-preference-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   secret:
     secretName: user-preference-app-secrets
     secretPasswordKey: custom
@@ -142,7 +162,7 @@ organization-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-organization-service
     pullPolicy: IfNotPresent
@@ -154,6 +174,11 @@ organization-service:
     username: svcuser
     secretName: organization-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   secret:
     secretName: organization-app-secrets
     secretPasswordKey: custom
@@ -184,7 +209,7 @@ team-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-team-service
     pullPolicy: IfNotPresent
@@ -196,6 +221,11 @@ team-service:
     username: svcuser
     secretName: team-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   secret:
     secretName: team-app-secrets
     secretPasswordKey: custom
@@ -226,7 +256,7 @@ plan-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-plan-service
     pullPolicy: IfNotPresent
@@ -238,6 +268,11 @@ plan-service:
     username: svcuser
     secretName: plan-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   secret:
     secretName: plan-app-secrets
     secretPasswordKey: custom
@@ -268,7 +303,7 @@ storage-service:
     limits:
       memory: "1.5Gi"
       cpu: "1"
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-storage-service
     pullPolicy: IfNotPresent
@@ -280,6 +315,11 @@ storage-service:
     username: svcuser
     secretName: storage-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "600000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   secret:
     secretName: storage-app-secrets
     secretPasswordKey: custom

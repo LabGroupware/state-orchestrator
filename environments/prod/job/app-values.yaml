@@ -51,7 +51,7 @@ global:
 job-service:
   enabled: true
   replicaCount: 2
-  javaOptions: "-XX:MaxDirectMemorySize=256M"
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   resources:
     requests:
       memory: "2Gi"
@@ -70,6 +70,11 @@ job-service:
     username: svcuser
     secretName: job-db-secrets
     secretPasswordKey: password
+    maxPoolSize: "200"
+    connectionTimeout: "60000"
+    idleTimeout: "60000"
+    maxLifetime: "1800000"
+    leakDetectionThreshold: "60000"
   redis:
     host: job-redis-master.job-service.svc.cluster.local
     port: 6379

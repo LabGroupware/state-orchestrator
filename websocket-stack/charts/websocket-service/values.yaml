@@ -6,6 +6,10 @@ image:
   tag: "latest"
 
 containerPort: 8080
+maxThread: 200
+minThread: 10
+connectionTimeout: 20000
+acceptCount: 100
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -39,6 +43,11 @@ db:
   username: postgres
   secretName: websocket-db-secret
   secretPasswordKey: password
+  maxPoolSize: "20"
+  connectionTimeout: "60000"
+  idleTimeout: "60000"
+  maxLifetime: "1800000"
+  leakDetectionThreshold: "60000"
 redis:
   host: localhost
   port: 6379
