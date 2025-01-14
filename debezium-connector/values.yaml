@@ -7,6 +7,10 @@ authServer:
   enabled: true
   namespace: "auth-service"
   serviceAccount: "auth"
+  volumeMounts:
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -18,6 +22,14 @@ jobService:
   enabled: true
   namespace: "job-service"
   serviceAccount: "job"
+  volumeMounts:
+    - name: "auth-postgres"
+      mountPath: "/var/lib/postgresql/data"
+    - name: "auth-postgres-wal"
+      mountPath: "/var/lib/postgresql/wal"
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -29,6 +41,10 @@ websocketService:
   enabled: true
   namespace: "websocket-service"
   serviceAccount: "websocket"
+  volumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -40,6 +56,10 @@ userProfileService:
   enabled: true
   namespace: "user-profile-service"
   serviceAccount: "user-profile"
+  volumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -51,6 +71,10 @@ userPreferenceService:
   enabled: true
   namespace: "user-preference-service"
   serviceAccount: "user-preference"
+  volumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -62,6 +86,10 @@ organizationService:
   enabled: true
   namespace: "organization-service"
   serviceAccount: "organization"
+  volumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -72,7 +100,11 @@ organizationService:
 teamService:
   enabled: true
   namespace: "team-service"
+  volumeMounts: []
   serviceAccount: "team"
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -84,6 +116,10 @@ planService:
   enabled: true
   namespace: "plan-service"
   serviceAccount: "plan"
+  volumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432
@@ -95,6 +131,10 @@ storageService:
   enabled: true
   namespace: "storage-service"
   serviceAccount: "storage"
+  volumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
   database:
     hostname: "postgres"
     port: 5432

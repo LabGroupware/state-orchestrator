@@ -54,24 +54,31 @@ websocket-service:
   # replicaCount: 3
   resources:
     requests:
-      memory: "1.5Gi"
-      cpu: "400m"
+      memory: "6Gi"
+      cpu: "1.4"
     limits:
-      memory: "2Gi"
-      cpu: "1"
-  maxThread: 400
+      memory: "6Gi"
+      cpu: "1.4"
+  tolerations:
+    - key: "for"             
+      operator: "Equal"      
+      value: "tracking"  
+      effect: "NoSchedule" 
+  nodeSelector:
+    for: "tracking"
+  maxThread: 1000
   minThread: 10
-  connectionTimeout: 20000
-  acceptCount: 400
+  connectionTimeout: 30000
+  acceptCount: 1000
   image:
     repository: ablankz/nova-ws-service
     pullPolicy: IfNotPresent
-    tag: "1.0.4"
+    tag: "1.0.5-arm64"
   serviceAccount:
     name: "websocket-sa"
   db:
     url: "jdbc:postgresql://websocket-postgres-postgresql.websocket-service.svc.cluster.local:5432/websocket"
-    username: svcuser
+    username: postgres
     secretName: websocket-db-secrets
     secretPasswordKey: password
     maxPoolSize: "200"

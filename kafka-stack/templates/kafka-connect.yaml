@@ -7,7 +7,6 @@ metadata:
   labels:
     strimzi.io/cluster: {{ .Values.kafkaCluster.name }}
 spec:
-  replicas: {{ .Values.kafkaConnect.replicas }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ .Values.kafkaConnect.name }}
@@ -42,6 +41,24 @@ spec:
             {{- end }}
           resources:
             {{- toYaml .Values.kafkaConnect.resources | nindent 12 }}
+          volumeMounts:
+            {{- toYaml .Values.kafkaConnect.volumeMounts | nindent 12 }}
+      {{- with .Values.kafkaConnect.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kafkaConnect.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kafkaConnect.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.kafkaConnect.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 ---
 apiVersion: v1
 kind: Service

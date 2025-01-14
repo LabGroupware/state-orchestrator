@@ -7,11 +7,18 @@ serviceAccount:
 master:
   resources:
     requests:
-      memory: "0.5Gi"
-      cpu: "800m"
+      memory: "4Gi"
+      cpu: "1"
     limits:
-      memory: "1.5Gi"
-      cpu: "1.2"
+      memory: "4Gi"
+      cpu: "1"
+  tolerations:
+    - key: "for"             
+      operator: "Equal"      
+      value: "tracking"  
+      effect: "NoSchedule" 
+  nodeSelector:
+    for: "tracking"
   serviceAccount:
     create: false
     name: job-sa

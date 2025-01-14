@@ -15,7 +15,8 @@ fi
 
 OUTPUT_FILE=$(helm package $TARGET_REPO_PATH -d ./chart/$TARGET_REPO_PATH | awk '{print $NF}')
 
-REGION="ap-northeast-1"
+# REGION="ap-northeast-1"
+REGION=us-east-1
 export AWS_DEFAULT_PROFILE=terraform
 
 # リポジトリの存在を確認

@@ -7,11 +7,18 @@ serviceAccount:
 master:
   resources:
     requests:
-      memory: "0.4Gi"
-      cpu: "800m"
+      memory: "800Mi"
+      cpu: "400m"
     limits:
-      memory: "1Gi"
-      cpu: "1.2"
+      memory: "800Mi"
+      cpu: "400m"
+  tolerations:
+    - key: "for"             
+      operator: "Equal"      
+      value: "auth"      
+      effect: "NoSchedule" 
+  nodeSelector:
+    for: "auth"
   serviceAccount:
     create: false
     name: auth-sa

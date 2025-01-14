@@ -2,14 +2,11 @@ global:
   security:
     allowInsecureImages: true
 auth:
-  username: svcuser
+  username: postgres
   existingSecret: auth-db-secrets
   secretKeys:
     adminPasswordKey: admin-password
     userPasswordKey: password
-image:
-  repository: "postgres"
-  tag: "1.2.0"
 serviceAccount:
   name: auth-sa
   create: false
@@ -17,19 +14,24 @@ readReplicas:
   replicaCount: 0
 primary:
   extendedConfiguration: |
+    listen_addresses = '*'
     max_connections = 300
     shared_buffers = 256MB
     work_mem = 2MB
     maintenance_work_mem = 64MB
     effective_cache_size = 1GB
     wal_buffers = 4MB
+    shared_preload_libraries = 'wal2json'
+    wal_level = logical             # minimal, archive, hot_standby, or logical (change requires restart)
+    max_wal_senders = 10           # max number of walsender processes (change requires restart)
+    max_replication_slots = 10    # max number of replication slots (change requires restart)
   resources:
     requests:
-      memory: "0.75Gi"
+      memory: "800Mi"
       cpu: "600m"
     limits:
-      memory: "1Gi"
-      cpu: "1"
+      memory: "800Mi"
+      cpu: "600m"
   containerSecurityContext:
     readOnlyRootFilesystem: false
   persistence:
@@ -41,6 +43,13 @@ primary:
   service:
     ports:
       postgresql: 5432
+  tolerations:
+    - key: "for"             
+      operator: "Equal"      
+      value: "auth"      
+      effect: "NoSchedule" 
+  nodeSelector:
+    for: "auth"
   extraVolumes:
     - name: auth-secrets-store
       csi:
@@ -49,11 +58,9 @@ primary:
         volumeAttributes:
           secretProviderClass: "auth-db-secrets"
   initdb:
-    user: svcuser
     scripts:
       init.sql: |
         CREATE DATABASE auth;
-        GRANT ALL PRIVILEGES ON DATABASE auth TO svcuser;
 
         \c auth;
 
@@ -184,6 +191,5 @@ primary:
       mountPath: "/mnt/secrets-store"
       readOnly: true
   pgHbaConfiguration: |-
-    host all svcuser 0.0.0.0/0 trust
+    host all postgres 0.0.0.0/0 trust
     local all postgres trust
-    local all svcuser  trust

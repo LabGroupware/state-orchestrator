@@ -48,39 +48,43 @@ global:
       ports:
         grpcPort: 9090
 
-            # - name: DB_MAX_POOL_SIZE
-            #   value: "{{ .Values.db.maxPoolSize }}"
-            # - name: DB_CONNECTION_TIMEOUT
-            #   value: "{{ .Values.db.connectionTimeout }}"
-            # - name: DB_IDLE_TIMEOUT
-            #   value: "{{ .Values.db.idleTimeout }}"
-            # - name: DB_MAX_LIFETIME
-            #   value: "{{ .Values.db.maxLifetime }}"
-            # - name: DB_LEAK_DETECTION_THRESHOLD
-            #   value: "{{ .Values.db.leakDetectionThreshold }}"
 user-profile-service:
   enabled: true
-  replicaCount: 1
+  replicaCount: 4
   resources:
     requests:
-      memory: "1.2Gi"
-      cpu: "500m"
+      memory: "2.4Gi"
+      cpu: "1.31"
     limits:
-      memory: "1.5Gi"
-      cpu: "1"
+      memory: "2.4Gi"
+      cpu: "1.31"
+  tolerations:
+    - key: "for"             
+      operator: "Equal"      
+      value: "domain-common"      
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "for"
+            operator: In
+            values:
+            - "domain-common"
   javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-user-profile-service
     pullPolicy: IfNotPresent
-    tag: "1.0.5"
+    tag: "1.0.7-arm64"
   serviceAccount:
     name: "user-profile-sa"
   db:
     url: "jdbc:postgresql://user-profile-postgres-postgresql.user-profile-service.svc.cluster.local:5432/user_profile"
-    username: svcuser
+    username: postgres
     secretName: user-profile-db-secrets
     secretPasswordKey: password
-    maxPoolSize: "200"
+    maxPoolSize: "100"
     connectionTimeout: "60000"
     idleTimeout: "600000"
     maxLifetime: "1800000"
@@ -88,12 +92,12 @@ user-profile-service:
   secret:
     secretName: user-profile-app-secrets
     secretPasswordKey: custom
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 75
+  # autoscaling:
+  #   enabled: true
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 75
   volumes:
   - name: user-profile-app-secrets-store
     csi:
@@ -107,27 +111,41 @@ user-profile-service:
     readOnly: true
 user-preference-service:
   enabled: true
-  replicaCount: 1
+  replicaCount: 4
   resources:
     requests:
-      memory: "1.2Gi"
-      cpu: "500m"
+      memory: "2.4Gi"
+      cpu: "1.31"
     limits:
-      memory: "1.5Gi"
-      cpu: "1"
+      memory: "2.4Gi"
+      cpu: "1.31"
+  tolerations:
+    - key: "for"             
+      operator: "Equal"      
+      value: "domain-common"      
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "for"
+            operator: In
+            values:
+            - "domain-common"
   javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-user-preference-service
     pullPolicy: IfNotPresent
-    tag: "1.0.2"
+    tag: "1.0.4-arm64"
   serviceAccount:
     name: "user-preference-sa"
   db:
     url: "jdbc:postgresql://user-preference-postgres-postgresql.user-preference-service.svc.cluster.local:5432/user_preference"
-    username: svcuser
+    username: postgres
     secretName: user-preference-db-secrets
     secretPasswordKey: password
-    maxPoolSize: "200"
+    maxPoolSize: "100"
     connectionTimeout: "60000"
     idleTimeout: "600000"
     maxLifetime: "1800000"
@@ -135,12 +153,12 @@ user-preference-service:
   secret:
     secretName: user-preference-app-secrets
     secretPasswordKey: custom
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 75
+  # autoscaling:
+  #   enabled: true
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 75
   volumes:
   - name: user-preference-app-secrets-store
     csi:
@@ -154,27 +172,41 @@ user-preference-service:
     readOnly: true
 organization-service:
   enabled: true
-  replicaCount: 1
+  replicaCount: 4
   resources:
     requests:
-      memory: "1.2Gi"
-      cpu: "500m"
+      memory: "2.4Gi"
+      cpu: "1.31"
     limits:
-      memory: "1.5Gi"
-      cpu: "1"
+      memory: "2.4Gi"
+      cpu: "1.31"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "domain-common"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "for"
+            operator: In
+            values:
+            - "domain-common"
   javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-organization-service
     pullPolicy: IfNotPresent
-    tag: "1.0.2"
+    tag: "1.0.4-arm64"
   serviceAccount:
     name: "organization-sa"
   db:
     url: "jdbc:postgresql://organization-postgres-postgresql.organization-service.svc.cluster.local:5432/organization"
-    username: svcuser
+    username: postgres
     secretName: organization-db-secrets
     secretPasswordKey: password
-    maxPoolSize: "200"
+    maxPoolSize: "100"
     connectionTimeout: "60000"
     idleTimeout: "600000"
     maxLifetime: "1800000"
@@ -182,12 +214,12 @@ organization-service:
   secret:
     secretName: organization-app-secrets
     secretPasswordKey: custom
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 75
+  # autoscaling:
+  #   enabled: true
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 75
   volumes:
   - name: organization-app-secrets-store
     csi:
@@ -201,27 +233,41 @@ organization-service:
     readOnly: true
 team-service:
   enabled: true
-  replicaCount: 1
+  replicaCount: 4
   resources:
     requests:
-      memory: "1.2Gi"
-      cpu: "500m"
+      memory: "2.4Gi"
+      cpu: "1.31"
     limits:
-      memory: "1.5Gi"
-      cpu: "1"
+      memory: "2.4Gi"
+      cpu: "1.31"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "domain-common"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "for"
+            operator: In
+            values:
+            - "domain-common"
   javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-team-service
     pullPolicy: IfNotPresent
-    tag: "1.0.2"
+    tag: "1.0.4-arm64"
   serviceAccount:
     name: "team-sa"
   db:
     url: "jdbc:postgresql://team-postgres-postgresql.team-service.svc.cluster.local:5432/team"
-    username: svcuser
+    username: postgres
     secretName: team-db-secrets
     secretPasswordKey: password
-    maxPoolSize: "200"
+    maxPoolSize: "100"
     connectionTimeout: "60000"
     idleTimeout: "600000"
     maxLifetime: "1800000"
@@ -229,12 +275,12 @@ team-service:
   secret:
     secretName: team-app-secrets
     secretPasswordKey: custom
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 75
+  # autoscaling:
+  #   enabled: true
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 75
   volumes:
   - name: team-app-secrets-store
     csi:
@@ -248,27 +294,41 @@ team-service:
     readOnly: true
 plan-service:
   enabled: true
-  replicaCount: 1
+  replicaCount: 4
   resources:
     requests:
-      memory: "1.2Gi"
-      cpu: "500m"
+      memory: "2.4Gi"
+      cpu: "1.31"
     limits:
-      memory: "1.5Gi"
-      cpu: "1"
+      memory: "2.4Gi"
+      cpu: "1.31"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "domain-common"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "for"
+            operator: In
+            values:
+            - "domain-common"
   javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-plan-service
     pullPolicy: IfNotPresent
-    tag: "1.0.2"
+    tag: "1.0.4-arm64"
   serviceAccount:
     name: "plan-sa"
   db:
     url: "jdbc:postgresql://plan-postgres-postgresql.plan-service.svc.cluster.local:5432/plan"
-    username: svcuser
+    username: postgres
     secretName: plan-db-secrets
     secretPasswordKey: password
-    maxPoolSize: "200"
+    maxPoolSize: "100"
     connectionTimeout: "60000"
     idleTimeout: "600000"
     maxLifetime: "1800000"
@@ -276,12 +336,12 @@ plan-service:
   secret:
     secretName: plan-app-secrets
     secretPasswordKey: custom
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 75
+  # autoscaling:
+  #   enabled: true
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 75
   volumes:
   - name: plan-app-secrets-store
     csi:
@@ -295,27 +355,41 @@ plan-service:
     readOnly: true
 storage-service:
   enabled: true
-  replicaCount: 1
+  replicaCount: 4
   resources:
     requests:
-      memory: "1.2Gi"
-      cpu: "500m"
+      memory: "2.4Gi"
+      cpu: "1.31"
     limits:
-      memory: "1.5Gi"
-      cpu: "1"
+      memory: "2.4Gi"
+      cpu: "1.31"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "domain-common"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: "for"
+            operator: In
+            values:
+            - "domain-common"
   javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   image:
     repository: ablankz/nova-storage-service
     pullPolicy: IfNotPresent
-    tag: "1.0.2"
+    tag: "1.0.4-arm64"
   serviceAccount:
     name: "storage-sa"
   db:
     url: "jdbc:postgresql://storage-postgres-postgresql.storage-service.svc.cluster.local:5432/storage"
-    username: svcuser
+    username: postgres
     secretName: storage-db-secrets
     secretPasswordKey: password
-    maxPoolSize: "200"
+    maxPoolSize: "100"
     connectionTimeout: "60000"
     idleTimeout: "600000"
     maxLifetime: "1800000"
@@ -323,12 +397,12 @@ storage-service:
   secret:
     secretName: storage-app-secrets
     secretPasswordKey: custom
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 3
-    targetCPUUtilizationPercentage: 80
-    targetMemoryUtilizationPercentage: 75
+  # autoscaling:
+  #   enabled: true
+  #   minReplicas: 1
+  #   maxReplicas: 3
+  #   targetCPUUtilizationPercentage: 80
+  #   targetMemoryUtilizationPercentage: 75
   volumes:
   - name: storage-app-secrets-store
     csi:

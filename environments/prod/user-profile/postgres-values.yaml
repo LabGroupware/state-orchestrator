@@ -2,7 +2,7 @@ global:
   security:
     allowInsecureImages: true
 auth:
-  username: svcuser
+  username: postgres
   existingSecret: user-profile-db-secrets
   secretKeys:
     adminPasswordKey: admin-password
@@ -14,19 +14,27 @@ readReplicas:
   replicaCount: 0
 primary:
   extendedConfiguration: |
-    max_connections = 300
-    shared_buffers = 256MB
-    work_mem = 2MB
+    listen_addresses = '*'
+    max_connections = 500
+    shared_buffers = 4GB
+    work_mem = 8MB
     maintenance_work_mem = 64MB
-    effective_cache_size = 1GB
-    wal_buffers = 4MB
+    effective_cache_size = 8GB
+    wal_buffers = 16MB
+    shared_preload_libraries = 'wal2json'
+    wal_level = logical             # minimal, archive, hot_standby, or logical (change requires restart)
+    max_wal_senders = 10           # max number of walsender processes (change requires restart)
+    max_replication_slots = 10    # max number of replication slots (change requires restart)
+    max_wal_size = 2GB              
+    checkpoint_timeout = 10min 
+    checkpoint_completion_target = 0.9
   resources:
     requests:
-      memory: "1Gi"
-      cpu: "500m"
+      memory: "14.6Gi"
+      cpu: "7.9"
     limits:
-      memory: "1.5Gi"
-      cpu: "1"
+      memory: "14.6Gi"
+      cpu: "7.9"
   containerSecurityContext:
     readOnlyRootFilesystem: false
   persistence:
@@ -35,6 +43,13 @@ primary:
     storageClass: block-general
     accessModes: 
       - ReadWriteOnce
+  tolerations:
+    - key: "for"             
+      operator: "Equal"      
+      value: "db-common"          
+      effect: "NoSchedule" 
+  nodeSelector:
+    for: "db-common"
   service:
     ports:
       postgresql: 5432
@@ -46,11 +61,9 @@ primary:
         volumeAttributes:
           secretProviderClass: "user-profile-db-secrets"
   initdb:
-    user: svcuser
     scripts:
       init.sql: |
         CREATE DATABASE user_profile;
-        GRANT ALL PRIVILEGES ON DATABASE user_profile TO svcuser;
 
         \c user_profile;
 
@@ -181,6 +194,5 @@ primary:
       mountPath: "/mnt/secrets-store"
       readOnly: true
   pgHbaConfiguration: |-
-    host all svcuser 0.0.0.0/0 trust
+    host all postgres 0.0.0.0/0 trust
     local all postgres trust
-    local all svcuser  trust

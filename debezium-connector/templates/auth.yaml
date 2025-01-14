@@ -61,7 +61,7 @@ spec:
             - -c
             - |
               echo "Waiting for PostgreSQL to be ready..."
-              until psql -h {{ .Values.authServer.database.hostname }} -U {{ .Values.authServer.database.username }} -c "SELECT 1;" > /dev/null 2>&1; do
+              until psql -h {{ .Values.authServer.database.hostname }} -U {{ .Values.authServer.database.username }} -d {{ .Values.authServer.database.dbname }} -c "SELECT 1;" > /dev/null 2>&1; do
                 echo "PostgreSQL is not ready. Retrying in 5 seconds..."
                 sleep 5
               done
@@ -95,5 +95,17 @@ spec:
         - name: connector-config
           configMap:
             name: {{ .Release.Name }}-auth-connector-config
+      {{- if .Values.authServer.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.authServer.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.authServer.affinity }}
+      affinity:
+        {{- toYaml .Values.authServer.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.authServer.tolerations }}
+      tolerations:
+        {{- toYaml .Values.authServer.tolerations | nindent 8 }}
+      {{- end }}
       restartPolicy: OnFailure
 {{- end }}

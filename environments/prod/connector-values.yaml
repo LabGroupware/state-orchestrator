@@ -7,10 +7,17 @@ authServer:
   enabled: true
   namespace: "auth-service"
   serviceAccount: "auth-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "auth-postgres-postgresql.auth-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "auth"
     passwordSecrets: "auth-db-secrets"
     passwordSecretKey: "password"
@@ -18,21 +25,35 @@ jobService:
   enabled: true
   namespace: "job-service"
   serviceAccount: "job-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "job-postgres-postgresql.job-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "job"
     passwordSecrets: "job-db-secrets"
     passwordSecretKey: "password"
 websocketService:
-  enabled: true
+  enabled: false
   namespace: "websocket-service"
   serviceAccount: "websocket-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "websocket-postgres-postgresql.websocket-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "websocket"
     passwordSecrets: "websocket-db-secrets"
     passwordSecretKey: "password"
@@ -40,10 +61,17 @@ userProfileService:
   enabled: true
   namespace: "user-profile-service"
   serviceAccount: "user-profile-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "user-profile-postgres-postgresql.user-profile-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "user_profile"
     passwordSecrets: "user-profile-db-secrets"
     passwordSecretKey: "password"
@@ -51,10 +79,17 @@ userPreferenceService:
   enabled: true
   namespace: "user-preference-service"
   serviceAccount: "user-preference-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "user-preference-postgres-postgresql.user-preference-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "user_preference"
     passwordSecrets: "user-preference-db-secrets"
     passwordSecretKey: "password"
@@ -62,10 +97,17 @@ organizationService:
   enabled: true
   namespace: "organization-service"
   serviceAccount: "organization-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "organization-postgres-postgresql.organization-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "organization"
     passwordSecrets: "organization-db-secrets"
     passwordSecretKey: "password"
@@ -73,10 +115,17 @@ teamService:
   enabled: true
   namespace: "team-service"
   serviceAccount: "team-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "team-postgres-postgresql.team-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "team"
     passwordSecrets: "team-db-secrets"
     passwordSecretKey: "password"
@@ -84,10 +133,17 @@ planService:
   enabled: true
   namespace: "plan-service"
   serviceAccount: "plan-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "plan-postgres-postgresql.plan-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "plan"
     passwordSecrets: "plan-db-secrets"
     passwordSecretKey: "password"
@@ -95,10 +151,17 @@ storageService:
   enabled: true
   namespace: "storage-service"
   serviceAccount: "storage-sa"
+  nodeSelector:
+    for: "connect"
+  tolerations:
+    - key: "for"
+      operator: "Equal"
+      value: "connect"
+      effect: "NoSchedule"
   database:
     hostname: "storage-postgres-postgresql.storage-service.svc.cluster.local"
     port: 5432
-    username: "svcuser"
+    username: "postgres"
     dbname: "storage"
     passwordSecrets: "storage-db-secrets"
     passwordSecretKey: "password"

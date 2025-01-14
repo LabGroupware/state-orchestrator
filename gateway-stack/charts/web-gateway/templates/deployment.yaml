@@ -98,6 +98,9 @@ spec:
               value: "{{ .Values.global.services.storageService.ports.grpcPort }}"
             - name: JAVA_TOOL_OPTIONS
               value: "{{ .Values.javaOptions }}"
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}

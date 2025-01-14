@@ -10,10 +10,10 @@ serviceAccount:
   name: auth-sa
   javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
 image:
-  tag: "1.0.4"
+  tag: "1.0.5-arm64"
 db:
   url: "jdbc:postgresql://auth-postgres-postgresql.auth-service.svc.cluster.local:5432/auth"
-  username: svcuser
+  username: postgres
   secretName: auth-db-secrets
   secretPasswordKey: password
   maxPoolSize: "40"
@@ -32,11 +32,18 @@ istio:
   enabled: true
 resources:
   requests:
-    memory: "1.5Gi"
-    cpu: "250m"
+    memory: "1Gi"
+    cpu: "500m"
   limits:
-    memory: "1.5Gi"
-    cpu: "1"
+    memory: "1Gi"
+    cpu: "500m"
+tolerations:
+  - key: "for"             
+    operator: "Equal"      
+    value: "auth"      
+    effect: "NoSchedule" 
+nodeSelector:
+  for: "auth"
 volumes:
   - name: auth-app-secrets-store
     csi:
@@ -49,7 +56,7 @@ volumeMounts:
     mountPath: "/mnt/app-secrets-store"
     readOnly: true
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 3
   targetCPUUtilizationPercentage: 80

@@ -50,19 +50,19 @@ global:
 
 web-gateway:
   enabled: true
-  replicaCount: 4
-  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:NativeMemoryTracking=detail -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
+  replicaCount: 2
+  javaOptions: "-XX:MaxDirectMemorySize=512M -XX:MaxMetaspaceSize=256M -XX:+UseContainerSupport -XX:MaxRAMPercentage=80.0 -Xss512k"
   resources:
     requests:
-      memory: "2Gi"
-      cpu: "400m"
+      memory: "6.8Gi"
+      cpu: "1.8"
     limits:
-      memory: "2.2Gi"
-      cpu: "1"
+      memory: "6.8Gi"
+      cpu: "1.8"
   image:
     repository: ablankz/nova-web-gateway
     pullPolicy: IfNotPresent
-    tag: "1.0.7"
+    tag: "1.0.12-arm64"
   serviceAccount:
     name: ""
   # autoscaling:
@@ -73,10 +73,17 @@ web-gateway:
   #   targetMemoryUtilizationPercentage: 75
   volumes: []
   volumeMounts: []
-  maxThread: 1000
+  maxThread: 8000
   minThread: 20
-  connectionTimeout: 40000
-  acceptCount: 1000
+  connectionTimeout: 60000
+  acceptCount: 8000
+  tolerations:
+  - key: "for"             
+    operator: "Equal"      
+    value: "web-gateway"      
+    effect: "NoSchedule" 
+  nodeSelector:
+    for: "web-gateway"
   istio:
     enabled: true
     virtualServiceName: web-gateway
@@ -84,4 +91,4 @@ web-gateway:
     hosts:
       - web.state.api.cresplanex.org
     gateway: public-gateway
-    timeout: 3m
+    timeout: 10m

@@ -8,11 +8,11 @@ kafkaCluster:
     metadataVersion: 3.8-IV0
     resources:
       requests:
-          memory: "2Gi"
-          cpu: "1"
+          memory: "5Gi"
+          cpu: "1.5"
       limits:
-          memory: "3.8Gi"
-          cpu: "2"
+          memory: "5Gi"
+          cpu: "1.5"
     replicas: 1
     listeners:
       - name: plain
@@ -42,6 +42,7 @@ kafkaCluster:
       transaction.state.log.min.isr: 1
       default.replication.factor: 1
       min.insync.replicas: 1
+      num.partitions: 4
   broker:
     replicas: 1
     storageVolumes:
@@ -91,7 +92,6 @@ kafkaConnect:
     repository: ablankz/debezium
     tag: "1.0.0"
     pullPolicy: IfNotPresent
-  replicas: 1
   bootstrapServers: "kafka-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
   config:
     group_id: connect-cluster
@@ -99,13 +99,12 @@ kafkaConnect:
     offset_storage_topic: connect-offsets
     status_storage_topic: connect-status
   additionalEnv: []
-  resources:
-    requests:
-      cpu: 1
-      memory: 2Gi
-    limits:
-      cpu: 1.2
-      memory: 3.8Gi
+  resources: {}
+  volumeMounts: []
+  volumes: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
     # -1 means it will use the default replication factor configured in the broker
     # config.storage.replication.factor: -1
     # offset.storage.replication.factor: -1

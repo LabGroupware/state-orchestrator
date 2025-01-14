@@ -18,6 +18,22 @@ releases:
     namespace: kafka
     chart: ecr/kafka-stack
     version: 0.1.23
+    values:
+      - kafkaConnect:
+          resources:
+            requests:
+              cpu: 1.56
+              memory: 2.6Gi
+            limits:
+              cpu: 1.56
+              memory: 2.6Gi
+          nodeSelector:
+            for: connect
+          tolerations:
+            - key: "for"
+              operator: "Equal"
+              value: "connect"
+              effect: "NoSchedule"
   - name: auth-redis
     namespace: auth-service
     chart: bitnami/redis
@@ -29,9 +45,7 @@ releases:
     namespace: auth-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_AUTH_PASSWORD" }}'
@@ -45,19 +59,17 @@ releases:
   #     - "websocket/redis-values.yaml"
   #   needs:
   #     - kafka/kafka-stack
-  - name: websocket-postgres
-    namespace: websocket-service
-    chart: bitnami/postgresql
-    values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
-          postgresql:
-            auth:
-              password: '{{ env "ORIGIN_WEBSOCKET_PASSWORD" }}'
-      - "websocket/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
+  # - name: websocket-postgres
+  #   namespace: websocket-service
+  #   chart: bitnami/postgresql
+  #   values:
+  #       - global:
+  #         postgresql:
+  #           auth:
+  #             password: '{{ env "ORIGIN_WEBSOCKET_PASSWORD" }}'
+  #     - "websocket/postgres-values.yaml"
+  #   needs:
+  #     - kafka/kafka-stack
   - name: job-redis
     namespace: job-service
     chart: bitnami/redis
@@ -69,9 +81,7 @@ releases:
     namespace: job-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_JOB_PASSWORD" }}'
@@ -93,9 +103,7 @@ releases:
     namespace: user-preference-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_USER_PREFERENCE_PASSWORD" }}'
@@ -106,9 +114,7 @@ releases:
     namespace: organization-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_ORGANIZATION_PASSWORD" }}'
@@ -119,9 +125,7 @@ releases:
     namespace: team-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_TEAM_PASSWORD" }}'
@@ -132,9 +136,7 @@ releases:
     namespace: storage-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_STORAGE_PASSWORD" }}'
@@ -145,9 +147,7 @@ releases:
     namespace: plan-service
     chart: bitnami/postgresql
     values:
-      - image:
-          registry: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-        global:
+      - global:
           postgresql:
             auth:
               password: '{{ env "ORIGIN_PLAN_PASSWORD" }}'
@@ -161,7 +161,7 @@ releases:
       - "connector-values.yaml"
     needs:
       - auth-service/auth-postgres
-      - websocket-service/websocket-postgres
+      # - websocket-service/websocket-postgres
       - job-service/job-postgres
       - user-profile-service/user-profile-postgres
       - user-preference-service/user-preference-postgres

@@ -65,8 +65,37 @@ grpcurl --plaintext -d '{}' job-service.job-service:9090 job.v1.JobService/Creat
 ./helm-push.sh websocket-stack
 ```
 
+### Set
+``` sh
+export AWS_DEFAULT_PROFILE=terraform
+aws sts get-caller-identity
+export REGION=us-east-1
+export SHORT_REGION=use1
+export CLUSTER_NAME=LGStateUsEast1Prod
+```
+
 ### Deploy
 ```sh
 helm plugin install https://github.com/databus23/helm-diff
 ./prod-deploy.sh
+```
+
+### Reset
+```sh
+kubectl delete pods --all -n user-profile-service && \
+kubectl delete pods --all -n user-preference-service && \
+kubectl delete pods --all -n organization-service && \
+kubectl delete pods --all -n  team-service && \
+kubectl delete pods --all -n storage-service && \
+kubectl delete pods --all -n plan-service && \
+kubectl delete pods --all -n job-service && \
+kubectl delete pods --all -n web-gateway && \
+kubectl delete pods --all -n ws-service
+
+helm uninstall user-profile-postgres -n user-profile-service && \
+helm uninstall user-preference-postgres -n user-preference-service && \
+helm uninstall organization-postgres -n organization-service && \
+helm uninstall team-postgres -n team-service && \
+helm uninstall storage-postgres -n storage-service && \
+helm uninstall plan-postgres -n plan-service 
 ```

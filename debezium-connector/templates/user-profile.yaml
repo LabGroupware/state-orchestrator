@@ -61,7 +61,7 @@ spec:
             - -c
             - |
               echo "Waiting for PostgreSQL to be ready..."
-              until psql -h {{ .Values.userProfileService.database.hostname }} -U {{ .Values.userProfileService.database.username }} -c "SELECT 1;" > /dev/null 2>&1; do
+              until psql -h {{ .Values.userProfileService.database.hostname }} -U {{ .Values.userProfileService.database.username }} -d {{ .Values.userProfileService.database.dbname }} -c "SELECT 1;" > /dev/null 2>&1; do
                 echo "PostgreSQL is not ready. Retrying in 5 seconds..."
                 sleep 5
               done
@@ -95,5 +95,17 @@ spec:
         - name: connector-config
           configMap:
             name: {{ .Release.Name }}-user-profile-connector-config
+      {{- if .Values.userProfileService.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.userProfileService.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if .Values.userProfileService.affinity }}
+      affinity:
+        {{- toYaml .Values.userProfileService.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.userProfileService.tolerations }}
+      tolerations:
+        {{- toYaml .Values.userProfileService.tolerations | nindent 8 }}
+      {{- end }}
       restartPolicy: OnFailure
 {{- end }}
