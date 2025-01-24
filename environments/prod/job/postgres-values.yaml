@@ -27,11 +27,11 @@ primary:
     max_replication_slots = 10    # max number of replication slots (change requires restart)
   resources:
     requests:
-      memory: "3Gi"
-      cpu: "1"
+      memory: "6Gi"
+      cpu: "2.5"
     limits:
-      memory: "3Gi"
-      cpu: "1"
+      memory: "6Gi"
+      cpu: "2.5"
   tolerations:
     - key: "for"             
       operator: "Equal"      

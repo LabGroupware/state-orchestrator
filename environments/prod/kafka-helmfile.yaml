@@ -1,0 +1,34 @@
+helmDefaults:
+  wait: true
+  timeout: 600
+  # atomic: true       # インストール失敗時に自動ロールバック
+  # concurrent: 1      # 同時実行数を1に制限
+
+repositories:
+  - name: ecr
+    url: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
+    oci: true
+    username: 'AWS'
+    password: '{{ requiredEnv "ECR_PASSWORD" }}'
+
+releases:
+  - name: kafka-stack
+    namespace: kafka
+    chart: ecr/kafka-stack
+    version: 0.1.23
+    values:
+      - kafkaConnect:
+          resources:
+            requests:
+              cpu: 1.56
+              memory: 2.6Gi
+            limits:
+              cpu: 1.56
+              memory: 2.6Gi
+          nodeSelector:
+            for: connect
+          tolerations:
+            - key: "for"
+              operator: "Equal"
+              value: "connect"
+              effect: "NoSchedule"

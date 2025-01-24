@@ -10,15 +10,32 @@ export CLUSTER_NAME="LGStateUsEast1Prod"
 
 kubectl apply -f ./base
 
-./secret_template/create_secret.sh auth-secrets ./secret/auth-secret.json auth-sa auth-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh websocket-secrets ./secret/websocket-secret.json websocket-sa websocket-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh job-secrets ./secret/job-secret.json job-sa job-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh user-profile-secrets ./secret/user-profile-secret.json user-profile-sa user-profile-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh user-preference-secrets ./secret/user-preference-secret.json user-preference-sa user-preference-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh team-secrets ./secret/team-secret.json team-sa team-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh organization-secrets ./secret/organization-secret.json organization-sa organization-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh plan-secrets ./secret/plan-secret.json plan-sa plan-service $CLUSTER_NAME $AWS_REGION
-./secret_template/create_secret.sh storage-secrets ./secret/storage-secret.json storage-sa storage-service $CLUSTER_NAME $AWS_REGION
+./secret_template/create_secret.sh auth-secrets ./secret/auth-secret.json auth-sa auth-service $CLUSTER_NAME $AWS_REGION & pid1=$!
+# ./secret_template/create_secret.sh websocket-secrets ./secret/websocket-secret.json websocket-sa websocket-service $CLUSTER_NAME $AWS_REGION
+./secret_template/create_secret.sh job-secrets ./secret/job-secret.json job-sa job-service $CLUSTER_NAME $AWS_REGION & pid2=$!
+./secret_template/create_secret.sh user-profile-secrets ./secret/user-profile-secret.json user-profile-sa user-profile-service $CLUSTER_NAME $AWS_REGION & pid3=$!
+./secret_template/create_secret.sh user-preference-secrets ./secret/user-preference-secret.json user-preference-sa user-preference-service $CLUSTER_NAME $AWS_REGION & pid4=$!
+./secret_template/create_secret.sh team-secrets ./secret/team-secret.json team-sa team-service $CLUSTER_NAME $AWS_REGION & pid5=$!
+./secret_template/create_secret.sh organization-secrets ./secret/organization-secret.json organization-sa organization-service $CLUSTER_NAME $AWS_REGION & pid6=$!
+./secret_template/create_secret.sh plan-secrets ./secret/plan-secret.json plan-sa plan-service $CLUSTER_NAME $AWS_REGION & pid7=$!
+./secret_template/create_secret.sh storage-secrets ./secret/storage-secret.json storage-sa storage-service $CLUSTER_NAME $AWS_REGION & pid8=$!
+
+wait $pid1
+echo "auth-secrets created"
+wait $pid2
+echo "job-secrets created"
+wait $pid3
+echo "user-profile-secrets created"
+wait $pid4
+echo "user-preference-secrets created"
+wait $pid5
+echo "team-secrets created"
+wait $pid6
+echo "organization-secrets created"
+wait $pid7
+echo "plan-secrets created"
+wait $pid8
+echo "storage-secrets created"
 
 kubectl apply -f ./secret/manifests
 
@@ -97,5 +114,7 @@ helm upgrade \
 strimzi/strimzi-kafka-operator \
 --namespace kafka \
 --wait && \
-helmfile apply -f environments/prod/helmfile.yaml && \
+helmfile apply -f environments/prod/kafka-helmfile.yaml && \
+helmfile apply -f environments/prod/db-helmfile.yaml && \
+helmfile apply -f environments/prod/connect-helmfile.yaml && \
 helmfile apply -f environments/prod/service-helmfile.yaml

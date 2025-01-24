@@ -28,6 +28,13 @@ primary:
     max_wal_size = 2GB              
     checkpoint_timeout = 10min 
     checkpoint_completion_target = 0.9
+  # resources:
+  #   requests:
+  #     memory: "29.4Gi"
+  #     cpu: "15.8"
+  #   limits:
+  #     memory: "29.4Gi"
+  #     cpu: "15.8"
   resources:
     requests:
       memory: "14.6Gi"

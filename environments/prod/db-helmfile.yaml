@@ -7,40 +7,13 @@ helmDefaults:
 repositories:
   - name: bitnami
     url: https://charts.bitnami.com/bitnami
-  - name: ecr
-    url: '{{ requiredEnv "AWS_ACCOUNT_ID" }}.dkr.ecr.{{ requiredEnv "AWS_REGION" }}.amazonaws.com'
-    oci: true
-    username: 'AWS'
-    password: '{{ requiredEnv "ECR_PASSWORD" }}'
 
 releases:
-  - name: kafka-stack
-    namespace: kafka
-    chart: ecr/kafka-stack
-    version: 0.1.23
-    values:
-      - kafkaConnect:
-          resources:
-            requests:
-              cpu: 1.56
-              memory: 2.6Gi
-            limits:
-              cpu: 1.56
-              memory: 2.6Gi
-          nodeSelector:
-            for: connect
-          tolerations:
-            - key: "for"
-              operator: "Equal"
-              value: "connect"
-              effect: "NoSchedule"
   - name: auth-redis
     namespace: auth-service
     chart: bitnami/redis
     values:
       - "auth/redis-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: auth-postgres
     namespace: auth-service
     chart: bitnami/postgresql
@@ -50,15 +23,11 @@ releases:
             auth:
               password: '{{ env "ORIGIN_AUTH_PASSWORD" }}'
       - "auth/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
   # - name: websocket-redis
   #   namespace: websocket-service
   #   chart: bitnami/redis
   #   values:
   #     - "websocket/redis-values.yaml"
-  #   needs:
-  #     - kafka/kafka-stack
   # - name: websocket-postgres
   #   namespace: websocket-service
   #   chart: bitnami/postgresql
@@ -67,16 +36,12 @@ releases:
   #         postgresql:
   #           auth:
   #             password: '{{ env "ORIGIN_WEBSOCKET_PASSWORD" }}'
-  #     - "websocket/postgres-values.yaml"
-  #   needs:
-  #     - kafka/kafka-stack
+  #       - "websocket/postgres-values.yaml"
   - name: job-redis
     namespace: job-service
     chart: bitnami/redis
     values:
       - "job/redis-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: job-postgres
     namespace: job-service
     chart: bitnami/postgresql
@@ -86,8 +51,6 @@ releases:
             auth:
               password: '{{ env "ORIGIN_JOB_PASSWORD" }}'
       - "job/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: user-profile-postgres
     namespace: user-profile-service
     chart: bitnami/postgresql
@@ -97,8 +60,6 @@ releases:
             auth:
               password: '{{ env "ORIGIN_USER_PROFILE_PASSWORD" }}'
       - "user-profile/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: user-preference-postgres
     namespace: user-preference-service
     chart: bitnami/postgresql
@@ -108,8 +69,6 @@ releases:
             auth:
               password: '{{ env "ORIGIN_USER_PREFERENCE_PASSWORD" }}'
       - "user-preference/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: organization-postgres
     namespace: organization-service
     chart: bitnami/postgresql
@@ -119,8 +78,6 @@ releases:
             auth:
               password: '{{ env "ORIGIN_ORGANIZATION_PASSWORD" }}'
       - "organization/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: team-postgres
     namespace: team-service
     chart: bitnami/postgresql
@@ -130,8 +87,6 @@ releases:
             auth:
               password: '{{ env "ORIGIN_TEAM_PASSWORD" }}'
       - "team/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: storage-postgres
     namespace: storage-service
     chart: bitnami/postgresql
@@ -141,8 +96,6 @@ releases:
             auth:
               password: '{{ env "ORIGIN_STORAGE_PASSWORD" }}'
       - "storage/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
   - name: plan-postgres
     namespace: plan-service
     chart: bitnami/postgresql
@@ -152,20 +105,3 @@ releases:
             auth:
               password: '{{ env "ORIGIN_PLAN_PASSWORD" }}'
       - "plan/postgres-values.yaml"
-    needs:
-      - kafka/kafka-stack
-  - name: debezium-connector
-    chart: ecr/debezium-connector
-    version: 0.1.22
-    values:
-      - "connector-values.yaml"
-    needs:
-      - auth-service/auth-postgres
-      # - websocket-service/websocket-postgres
-      - job-service/job-postgres
-      - user-profile-service/user-profile-postgres
-      - user-preference-service/user-preference-postgres
-      - organization-service/organization-postgres
-      - team-service/team-postgres
-      - storage-service/storage-postgres
-      - plan-service/plan-postgres

@@ -7,10 +7,10 @@ serviceAccount:
 master:
   resources:
     requests:
-      memory: "4Gi"
+      memory: "10Gi"
       cpu: "1"
     limits:
-      memory: "4Gi"
+      memory: "10Gi"
       cpu: "1"
   tolerations:
     - key: "for"             
